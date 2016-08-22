@@ -1,19 +1,21 @@
-<p id="notice"><%= notice %></p>
+<div class="center">
+  <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Name:</strong>
-  <%= @product.name %>
-</p>
+  <p>
+    <strong>Name:</strong>
+    <%= @product.name %>
+  </p>
 
-<p>
-  <strong>Net price:</strong>
-  <%= @product.net_price %>
-</p>
+  <p>
+    <strong>Net price:</strong>
+    <%= @product.net_price %>
+  </p>
 
-<p>
-  <strong>Vat rate:</strong>
-  <%= @product.vat_rate %>
-</p>
+  <p>
+    <strong>Vat rate:</strong>
+    <%= @product.vat_rate %>
+  </p>
 
-<%= link_to 'Edit', edit_product_path(@product) %> |
-<%= link_to 'Back', products_path %>
+  <%= link_to 'Edit', edit_product_path(@product), class: 'btn' %> |
+  <%= link_to 'Back', products_path, class: 'btn' %>
+</div>
