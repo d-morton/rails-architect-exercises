@@ -20,8 +20,7 @@ module Orders
         sku: sku,
         quantity: quantity,
         net_price: net_price,
-        vat_rate: vat_rate,
-        net_value: net_price * quantity))
+        vat_rate: vat_rate))
     end
 
     def submit(customer_id:)
