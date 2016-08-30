@@ -10,16 +10,16 @@ module Orders
     it 'newly created order could be cancelled' do
       order = Order.new(number: '12345')
       expect{ order.cancel }.not_to raise_error
-      expect(order.unpublished_events).to eq [
-        OrderCancelled.new(order_number: '12345'),
+      expect(order).to publish [
+        OrderCancelled.new(data: { order_number: '12345' }),
       ]
     end
 
     it 'newly created order could be expired' do
       order = Order.new(number: '12345')
       expect{ order.expire }.not_to raise_error
-      expect(order.unpublished_events).to eq [
-        OrderExpired.new(order_number: '12345'),
+      expect(order).to publish [
+        OrderExpired.new(data: { order_number: '12345' }),
       ]
     end
 
@@ -52,12 +52,12 @@ module Orders
     it 'item could be added to draft order' do
       order = Order.new(number: '12345')
       expect{ order.add_item(sku: 123, quantity: 1, net_price: 100.0, vat_rate: 0.23)}.not_to raise_error
-      expect(order.unpublished_events).to eq [
-        OrderItemAdded.new(order_number:  '12345',
+      expect(order).to publish [
+        OrderItemAdded.new(data: { order_number:  '12345',
                            sku:           123,
                            quantity:      1,
                            net_price:     100.0,
-                           vat_rate:      0.23),
+                           vat_rate:      0.23 }),
       ]
     end
 
@@ -66,13 +66,13 @@ module Orders
       order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 0.23)
       expect{ order.submit(customer_id: 123)}.not_to raise_error
       expect{ order.ship }.not_to raise_error
-      expect(order.unpublished_events).to eq [
-        OrderItemAdded.new(order_number:  '12345',
+      expect(order).to publish [
+        OrderItemAdded.new(data: { order_number:  '12345',
                            sku:           123,
                            quantity:      2,
                            net_price:     100.0,
-                           vat_rate:      0.23),
-        OrderSubmitted.new(order_number:  '12345',
+                           vat_rate:      0.23 }),
+        OrderSubmitted.new(data: { order_number:  '12345',
                            customer_id:   123,
                            items: [
                              { sku:       123,
@@ -81,8 +81,8 @@ module Orders
                                vat_rate:  0.23 },
                            ],
                            net_total:     200.0,
-                           fee:           15.0),
-        OrderShipped.new(order_number:    '12345'),
+                           fee:           15.0 }),
+        OrderShipped.new(data: { order_number:    '12345' }),
       ]
     end
 
