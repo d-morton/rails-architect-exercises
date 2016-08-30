@@ -3,19 +3,13 @@ require 'active_model'
 module Command
   ValidationError = Class.new(StandardError)
 
-  include ActiveModel::Model
-  include ActiveModel::Validations
-  include ActiveModel::Conversion
-
-  def initialize(attributes={})
-    super
+  def self.included(base)
+    base.include ActiveModel::Model
+    base.include ActiveModel::Validations
+    base.include ActiveModel::Conversion
   end
 
   def validate!
     raise ValidationError, errors unless valid?
-  end
-
-  def persisted?
-    false
   end
 end
