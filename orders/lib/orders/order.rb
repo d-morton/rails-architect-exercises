@@ -67,12 +67,12 @@ module Orders
     end
 
     def apply_item_added(ev)
-      items.add({
-        sku: sku,
-        quantity: quantity,
-        net_price: net_price,
-        vat_rate: vat_rate,
-      })
+      @items << {
+        sku:        ev.data.sku,
+        quantity:   ev.data.quantity,
+        net_price:  ev.data.net_price,
+        vat_rate:   ev.data.vat_rate,
+      }
     end
 
     def apply_submitted(ev)
@@ -92,7 +92,7 @@ module Orders
     end
 
     def calculate_net_total
-      items.sum{|i| i[:quantity] * i[:net_price]}
+      @items.sum{|i| i[:quantity] * i[:net_price]}
     end
   end
 end
