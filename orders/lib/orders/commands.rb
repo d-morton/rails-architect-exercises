@@ -2,16 +2,18 @@ module Orders
   class SubmitOrderCommand
     include Command
 
-    attribute :order_number,             String
-    attribute :customer_id,              Integer
+    attr_accessor :order_number
+    attr_accessor :customer_id
+    attr_accessor :items
 
-    validates_presence_of :order_number, :customer_id
+    validates_presence_of :order_number, :customer_id, :items
+    validates :customer_id, numericality: { only_integer: true }
   end
 
   class ExpireOrderCommand
     include Command
 
-    attribute :order_number,             String
+    attr_accessor :order_number
 
     validates_presence_of :order_number
   end
@@ -19,7 +21,7 @@ module Orders
   class CalcelOrderCommand
     include Command
 
-    attribute :order_number,             String
+    attr_accessor :order_number
 
     validates_presence_of :order_number
   end
@@ -27,7 +29,7 @@ module Orders
   class ShipOrderCommand
     include Command
 
-    attribute :order_number,             String
+    attr_accessor :order_number
 
     validates_presence_of :order_number
   end
