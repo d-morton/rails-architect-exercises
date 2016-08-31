@@ -86,5 +86,13 @@ module Orders
       ]
     end
 
+    it 'shipped order could not be expired or cancelled' do
+      order = Order.new(number: '12345')
+      order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 0.23)
+      order.submit(customer_id: 123)
+      order.ship
+      expect{ order.expire }.to raise_error(Order::NotAllowed)
+      expect{ order.cancel }.to raise_error(Order::NotAllowed)
+    end
   end
 end
