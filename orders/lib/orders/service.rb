@@ -1,21 +1,22 @@
-require 'command/bus'
+require 'arkency/command_bus'
 
 module Orders
   class Service
     def initialize(store:, fee_calculator: FeeCalculator.new)
       @store          = store
       @fee_calculator = fee_calculator
-      @bus            = Command::Bus.new.tap do |b|
-        b.register(Orders::SubmitOrderCommand, method(:submit))
-        b.register(Orders::ExpireOrderCommand, method(:expire))
-        b.register(Orders::CancelOrderCommand, method(:cancel))
-        b.register(Orders::ShipOrderCommand,   method(:ship))
-      end
+
+      @command_bus    = Arkency::CommandBus.new
+      { Orders::SubmitOrderCommand  => method(:submit),
+        Orders::ExpireOrderCommand  => method(:expire),
+        Orders::CancelOrderCommand  => method(:cancel),
+        Orders::ShipOrderCommand    => method(:ship),
+      }.map{|klass, handler| @command_bus.register(klass, handler)}
     end
 
     def call(*commands)
-      ActiveRecord::Base.transaction do
-        bus.dispatch(*commands)
+      commands.each do |cmd|
+        @command_bus.call(cmd)
       end
     end
 
