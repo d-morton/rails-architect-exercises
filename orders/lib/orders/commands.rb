@@ -18,7 +18,7 @@ module Orders
     validates_presence_of :order_number
   end
 
-  class CalcelOrderCommand
+  class CancelOrderCommand
     include Command
 
     attr_accessor :order_number

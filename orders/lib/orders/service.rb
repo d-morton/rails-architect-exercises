@@ -23,7 +23,7 @@ module Orders
 
     def with_order(number)
       repository = AggregateRoot::Repository.new(@store)
-      order = Order.new(number: number, fee_calculator: fee_calculator)
+      order = Order.new(number: number, fee_calculator: @fee_calculator)
       repository.load(order)
       yield order
       repository.store(order)
@@ -32,10 +32,10 @@ module Orders
     def submit(cmd)
       with_order(cmd.order_number) do |order|
         cmd.items.each do |item|
-          order.add_item(sku:       item.sku,
-                         quantity:  item.quantity,
-                         net_price: item.net_price,
-                         vat_rate:  item.vat_rate)
+          order.add_item(sku:       item[:sku],
+                         quantity:  item[:quantity],
+                         net_price: item[:net_price],
+                         vat_rate:  item[:vat_rate])
         end
         order.submit(customer_id: cmd.customer_id)
       end
