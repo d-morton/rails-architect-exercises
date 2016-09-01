@@ -26,7 +26,7 @@ module Orders
     def submit(customer_id:)
       raise NotAllowed unless @state == :draft
       raise Invalid    if @items.empty?
-      net_total = calculate_net_total
+      net_total = @items.sum{|i| i[:quantity] * i[:net_price]}
       apply(OrderSubmitted.new(data: {
         order_number: id,
         customer_id:  customer_id,
@@ -89,10 +89,6 @@ module Orders
 
     def apply_shipped(ev)
       @state = :shipped
-    end
-
-    def calculate_net_total
-      @items.sum{|i| i[:quantity] * i[:net_price]}
     end
   end
 end
