@@ -1,6 +1,7 @@
 ENV['RAILS_ENV'] = 'test'
 
 require File.expand_path("../../config/environment", __FILE__)
+require_relative '../rails_event_store-matchers/lib/rails_event_store-matchers'
 
 require 'rspec/rails'
 require 'rspec/collection_matchers'
