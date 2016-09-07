@@ -1,7 +1,5 @@
 <% provide(:title, 'Edit product') %>
-<div class="center jumbotron">
-  <h1>Editing Product</h1>
+<h1>Editing Product</h1>
 
-  <%= render 'form', product: @product %>
-  <%= link_to 'Back', products_path, class: 'btn' %>
-</div>
+<%= render 'form', product: @product %>
+<%= link_to 'Back', products_path, class: 'btn' %>
