@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Number:</strong>
+  <%= @order.number %>
+</p>
+
+<p>
+  <strong>Items count:</strong>
+  <%= @order.items_count %>
+</p>
+
+<p>
+  <strong>Net value:</strong>
+  <%= @order.net_value %>
+</p>
+
+<p>
+  <strong>Vat amount:</strong>
+  <%= @order.vat_amount %>
+</p>
+
+<p>
+  <strong>Gross value:</strong>
+  <%= @order.gross_value %>
+</p>
+
+<p>
+  <strong>Customer name:</strong>
+  <%= @order.customer_name %>
+</p>
+
+<p>
+  <strong>State:</strong>
+  <%= @order.state %>
+</p>
+
+<%= link_to 'Edit', edit_order_path(@order) %> |
+<%= link_to 'Back', orders_path %>

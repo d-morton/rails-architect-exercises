@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  number: MyString
+  items_count: 1
+  net_value: 9.99
+  vat_amount: 9.99
+  gross_value: 9.99
+  customer_name: MyString
+  state: MyString
+
+two:
+  number: MyString
+  items_count: 1
+  net_value: 9.99
+  vat_amount: 9.99
+  gross_value: 9.99
+  customer_name: MyString
+  state: MyString

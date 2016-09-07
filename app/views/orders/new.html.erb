@@ -1,0 +1,31 @@
+<h1>New Order</h1>
+
+<%= form_tag({controller: "orders", action: "create"}, method: "post") do %>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Product</th>
+      <th>Net price</th>
+      <th>Quantity</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @products.each do |product| %>
+      <tr>
+        <td><%= product.name %></td>
+        <td><%= product.net_price %></td>
+        <td><%= number_field_tag "quantity[]", 0,  min: 0, step: 1 %>
+            <%= hidden_field_tag "products[]", product.id %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+  <p>Customer:
+  <%= select_tag(:customer_id, options_from_collection_for_select(@customers, :id, :name)) %>
+  </p>
+
+  <%= submit_tag("Submit order", class: "btn btn-primary") %>
+  <%= link_to 'Back', orders_path, class: "btn btn-default" %>
+<% end %>
