@@ -1,6 +1,8 @@
 require_relative 'boot'
 
 require 'rails/all'
+require 'rails_event_store'
+require_relative '../orders/lib/orders'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -12,5 +14,8 @@ module CqrsEsSampleWithResNew
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
     config.paths.add 'orders/lib',           eager_load: true
+
+    config.event_store = RailsEventStore::Client.new(
+      repository: RailsEventStore::InMemoryRepository.new)
   end
 end
