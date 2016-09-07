@@ -8,7 +8,7 @@ class OrdersController < ApplicationController
 
   def new
     @products  = Product.all
-    @customers = []
+    @customers = Customer.all
   end
 
   def create

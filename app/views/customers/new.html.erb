@@ -1,0 +1,6 @@
+<% provide(:title, 'New customer') %>
+<h1>New Customer</h1>
+
+<%= render 'form', customer: @customer %>
+
+<%= link_to 'Back', customers_path, class: 'btn btn-default' %>

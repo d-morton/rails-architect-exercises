@@ -1,0 +1,28 @@
+<% provide(:title, 'Customers list') %>
+<p id="notice"><%= notice %></p>
+
+<h1>Customers</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @customers.each do |customer| %>
+      <tr>
+        <td><%= customer.name %></td>
+        <td><%= link_to 'Show', customer, class: 'btn btn-default' %></td>
+        <td><%= link_to 'Edit', edit_customer_path(customer), class: 'btn btn-default' %></td>
+        <td><%= link_to 'Destroy', customer, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-default' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Customer', new_customer_path, class: 'btn btn-default' %>

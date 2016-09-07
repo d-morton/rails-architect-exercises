@@ -1,8 +1,6 @@
 <% provide(:title, 'Your orders') %>
 <p id="notice"><%= notice %></p>
 
-<h1>Your orders</h1>
-
 <table class="table">
   <thead>
     <tr>
@@ -27,9 +25,9 @@
         <td><%= order.gross_value %></td>
         <td><%= order.customer_name %></td>
         <td><%= order.state %></td>
-        <td><%= link_to 'Ship', ship_order_path(order) %></td>
-        <td><%= link_to 'Cancel', order, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-        <td><%= link_to 'History', order_path(order) %></td>
+        <td><%= link_to 'Ship', ship_order_path(order), class: 'btn btn-default' %></td>
+        <td><%= link_to 'Cancel', order, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-default' %></td>
+        <td><%= link_to 'History', order_path(order), class: 'btn btn-default' %></td>
       </tr>
     <% end %>
   </tbody>
@@ -37,4 +35,4 @@
 
 <br>
 
-<%= link_to 'New Order', new_order_path %>
+<%= link_to 'New Order', new_order_path, class: 'btn btn-default' %>
