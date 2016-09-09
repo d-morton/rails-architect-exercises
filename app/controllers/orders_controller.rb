@@ -4,6 +4,8 @@ class OrdersController < ApplicationController
   end
 
   def show
+    order = Order.find(params[:id])
+    @history = Rails.application.config.event_store.read_stream_events_backward("#{order.number}")
   end
 
   def new
@@ -18,8 +20,10 @@ class OrdersController < ApplicationController
       customer_id: params[:customer_id])
     service.call(cmd)
     redirect_to orders_url, notice: 'Your order was submitted.'
-  rescue
-    redirect_to orders_url, notice: 'Could not submit the order.'
+  rescue Orders::Order::Invalid
+    redirect_to orders_url, notice: "Could not submit the order, didn't you forget to add anything?"
+  rescue Orders::Order::NotAllowed
+    redirect_to orders_url, notice: "Could not submit the order."
   end
 
   def destroy
@@ -27,17 +31,21 @@ class OrdersController < ApplicationController
     cmd = Orders::CancelOrderCommand.new(order_number: order.number)
     service.call(cmd)
     redirect_to orders_url, notice: 'Order was cancelled.'
-  rescue
-    redirect_to orders_url, notice: 'Could not cancel the order.'
+  rescue Orders::Order::NotAllowed
+    redirect_to orders_url, notice: "Could not cancel the order."
+  end
+
+  def pay
+    redirect_to orders_url, notice: "TBD..."
   end
 
   def ship
-    order = Order.find(params[:id])
+    order = Order.find(params[:order_id])
     cmd = Orders::ShipOrderCommand.new(order_number: order.number)
     service.call(cmd)
     redirect_to orders_url, notice: 'Order shipment was initiated.'
-  rescue
-    redirect_to orders_url, notice: 'Could not ship the order.'
+  rescue Orders::Order::NotAllowed
+    redirect_to orders_url, notice: "Could not ship the order."
   end
 
   private
@@ -46,7 +54,7 @@ class OrdersController < ApplicationController
   end
 
   def order_number
-    "#{Time.now.year}-#{Time.now.month}-#{SecureRandom.hex}"
+    "#{Time.now.year}-#{Time.now.month}-#{SecureRandom.hex(5)}"
   end
 
   def order_items

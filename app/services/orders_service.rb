@@ -32,10 +32,7 @@ class OrdersService
   def submit(cmd)
     with_order(cmd.order_number) do |order|
       cmd.items.each do |item|
-        order.add_item(sku:       item[:sku],
-                       quantity:  item[:quantity],
-                       net_price: item[:net_price],
-                       vat_rate:  item[:vat_rate])
+        order.add_item(item)
       end
       order.submit(customer_id: cmd.customer_id)
     end

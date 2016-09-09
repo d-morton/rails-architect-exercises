@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
-  resources :customers
   root to: 'orders#index'
-  resources :orders, only: [:index, :new, :create, :destroy]
+  resources :orders, only: [:index, :show, :new, :create, :destroy] do
+    post :pay
+    post :ship
+  end
+
+  resources :customers
   resources :products
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
