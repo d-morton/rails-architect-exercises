@@ -1,10 +1,44 @@
 <p id="notice"><%= notice %></p>
 
-<% @history.each do |event| %>
-  <p>
-  <strong><%= @event.class %></strong>
-  <%= @event.data.inspect %>
-  <%= @event.metadata.inspect %>
-  </p>
-<% end %>
-<%= link_to 'Back', orders_path %>
+<table class="table">
+  <tbody>
+    <% @history.each do |event| %>
+      <tr>
+        <td colspan="4"><h4><%= event.class %></h4></td>
+      </tr>
+      <tr>
+        <td><strong>ID:</strong></td>
+        <td><%= event.event_id %></td>
+        <td><strong>Timestamp:</strong></td>
+        <td><%= event.timestamp %></td>
+      </tr>
+      <tr>
+        <td><strong>Data:</strong></td>
+        <td colspan="3">
+          <table class='table'>
+            <% event.data.to_h.each do |k,v| %>
+              <tr>
+                <td><%= k %>:</td>
+                <td><%= v.to_s %></td>
+              </tr>
+            <% end %>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Meta:</strong></td>
+        <td colspan="3">
+          <table class='table'>
+            <% event.metadata.to_h.each do |k,v| %>
+              <tr>
+                <td><%= k %>:</td>
+                <td><%= v.to_s %></td>
+              </tr>
+            <% end %>
+          </table>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= link_to 'Back', orders_path, class: 'btn btn-default' %>
