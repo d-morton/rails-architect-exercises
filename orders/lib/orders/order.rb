@@ -15,24 +15,38 @@ module Orders
 
     def add_item(sku:, quantity:, net_price:, vat_rate:)
       raise NotAllowed unless @state == :draft
+
+      net_value   = quantity * net_price
+      vat_amount  = net_value * (vat_rate / 100.0.to_d)
+      gross_value = net_value + vat_amount
+
       apply(OrderItemAdded.new(data: {
         order_number: id,
         sku: sku,
         quantity: quantity,
         net_price: net_price,
-        vat_rate: vat_rate}))
+        net_value: net_value,
+        vat_amount: vat_amount,
+        gross_value: gross_value}))
     end
 
     def submit(customer_id:)
       raise NotAllowed unless @state == :draft
       raise Invalid    if @items.empty?
-      net_total = @items.sum{|i| i[:quantity] * i[:net_price]}
+
+      net_total = @items.sum{|i| i[:net_value]}
+      gross_total = @items.sum{|i| i[:gross_value]}
+      fee = @fee_calculator.call(gross_total)
+      vat_total = @items.sum{|i| i[:vat_amount]}
+
       apply(OrderSubmitted.new(data: {
         order_number: id,
         customer_id:  customer_id,
-        items:        @items,
+        items_count:  @items.sum{|i| i[:quantity]},
         net_total:    net_total,
-        fee:          @fee_calculator.call(net_total)}))
+        vat_total:    vat_total,
+        gross_total:  gross_total,
+        fee:          fee}))
     end
 
     def cancel
@@ -68,10 +82,12 @@ module Orders
 
     def apply_item_added(ev)
       @items << {
-        sku:        ev.data.sku,
-        quantity:   ev.data.quantity,
-        net_price:  ev.data.net_price,
-        vat_rate:   ev.data.vat_rate,
+        sku:          ev.data.sku,
+        quantity:     ev.data.quantity,
+        net_price:    ev.data.net_price,
+        net_value:    ev.data.net_value,
+        vat_amount:   ev.data.vat_amount,
+        gross_value:  ev.data.gross_value,
       }
     end
 
