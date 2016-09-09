@@ -15,7 +15,6 @@ module CqrsEsSampleWithResNew
     # -- all .rb files in that directory are automatically loaded.
     config.paths.add 'orders/lib',           eager_load: true
 
-    config.event_store = RailsEventStore::Client.new(
-      repository: RailsEventStore::InMemoryRepository.new)
+    config.event_store = RailsEventStore::Client.new
   end
 end
