@@ -1,10 +1,22 @@
 # Ruby version
 
-Ruby `2.3.*` recommended
+Ruby `2.3.*` recommended (2.2.2+)
 
 # System dependencies
 
-1. sqlite
+* sqlite
+
+# Get your project up and running in a quick manner
+
+```
+make init
+```
+
+# Get your setup up to date with the latest changes
+
+```
+make dev
+```
 
 # Gems
 
