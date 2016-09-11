@@ -39,7 +39,7 @@ module Orders
     it 'expired order could not be modified, submitted or shipped' do
       order = Order.new(number: '12345')
       order.expire
-      expect{ order.add_item(sku: 123, quantity: 1, net_price: 100.0, vat_rate: 0.23)}.to raise_error(Order::NotAllowed)
+      expect{ order.add_item(sku: 123, quantity: 1, net_price: 100.0, vat_rate: 23)}.to raise_error(Order::NotAllowed)
       expect{ order.submit(customer_id: 123)}.to raise_error(Order::NotAllowed)
       expect{ order.ship }.to raise_error(Order::NotAllowed)
     end
@@ -51,19 +51,22 @@ module Orders
 
     it 'item could be added to draft order' do
       order = Order.new(number: '12345')
-      expect{ order.add_item(sku: 123, quantity: 1, net_price: 100.0, vat_rate: 0.23)}.not_to raise_error
+      expect{ order.add_item(sku: 123, quantity: 1, net_price: 100.0, vat_rate: 23)}.not_to raise_error
       expect(order).to publish [
         OrderItemAdded.new(data: { order_number:  '12345',
                            sku:           123,
                            quantity:      1,
                            net_price:     100.0,
-                           vat_rate:      0.23 }),
+                           net_value:     100.0,
+                           vat_amount:    23.0,
+                           gross_value:   123.0,
+        }),
       ]
     end
 
     it 'order with items could be submitted & shipped' do
       order = Order.new(number: '12345')
-      order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 0.23)
+      order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 23)
       expect{ order.submit(customer_id: 123)}.not_to raise_error
       expect{ order.ship }.not_to raise_error
       expect(order).to publish [
@@ -71,17 +74,16 @@ module Orders
                            sku:           123,
                            quantity:      2,
                            net_price:     100.0,
-                           vat_rate:      0.23 }),
+                           net_value:     200.0,
+                           vat_amount:    46.0,
+                           gross_value:   246.0, }),
         OrderSubmitted.new(data: { order_number:  '12345',
                            customer_id:   123,
-                           items: [
-                             { sku:       123,
-                               quantity:  2,
-                               net_price: 100.0,
-                               vat_rate:  0.23 },
-                           ],
+                           items_count:   2,
                            net_total:     200.0,
-                           fee:           15.0 }),
+                           vat_total:     46.0,
+                           gross_total:   246.0,
+                           fee:           0.0 }),
         OrderShipped.new(data: { order_number:    '12345' }),
       ]
     end
