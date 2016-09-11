@@ -2,6 +2,18 @@ init: bundler db-init ## runs make bundler and make db-init
 
 dev: bundler db-migrate ## runs make bundler and make db-migrate
 
+spec: payments-spec orders-spec ## runs all tests
+	@echo "Running specs from spec/"
+	@bundle exec rspec spec/
+
+payments-spec: ## runs rspec for Payments BC
+	@echo "Running tests for Payments BC"
+	@bundle exec rspec payments/spec/
+
+orders-spec: ## runs rspec for Orders BC
+	@echo "Running tests for Orders BC"
+	@bundle exec rspec orders/spec/
+
 bundler: ## runs bundle install
 	@echo "Installing gem dependencies"
 	@bundle install

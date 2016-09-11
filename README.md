@@ -18,19 +18,16 @@ make init
 make dev
 ```
 
-# Gems
+# Runs tests for Orders BC
 
 ```
-gem install bundler
-bundle install
+make orders-spec
 ```
 
-# Database creation & initialization
+# Runs tests for Payments BC
 
 ```
-bundle exec rake db:create:all
-bundle exec rake db:reset
-RAILS_ENV=test bundle exec rake db:environment:set db:schema:load
+make payments-spec
 ```
 
 # How to run the test suite
@@ -38,17 +35,24 @@ RAILS_ENV=test bundle exec rake db:environment:set db:schema:load
 ## Full
 
 ```
-bundle exec rspec spec/
+make spec
 ```
 
 ## Payments BC
 
 ```
+make payments-spec
+```
+OR
+```
 bundle exec rspec payments/spec/
 ```
 
 ## Orders BC
-
+```
+make orders-spec
+```
+OR
 ```
 bundle exec rspec orders/spec/
 ```
