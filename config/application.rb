@@ -16,5 +16,10 @@ module CqrsEsSampleWithResNew
     config.paths.add 'orders/lib',           eager_load: true
 
     config.event_store = RailsEventStore::Client.new
+
+    config.generators do |generate|
+      generate.helper          false
+      generate.assets          false
+    end
   end
 end
