@@ -1,24 +1,44 @@
-# README
+# Ruby version
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Ruby `2.3.*` recommended
 
-Things you may want to cover:
+# System dependencies
 
-* Ruby version
+1. sqlite
 
-* System dependencies
+# Gems
 
-* Configuration
+```
+gem install bundler
+bundle install
+```
 
-* Database creation
+# Database creation & initialization
 
-* Database initialization
+```
+bundle exec rake db:create:all
+bundle exec rake db:reset
+RAILS_ENV=test bundle exec rake db:environment:set db:schema:load
+```
 
-* How to run the test suite
+# How to run the test suite
 
-* Services (job queues, cache servers, search engines, etc.)
+## Full
 
-* Deployment instructions
+```
+bundle exec rspec spec/
+```
 
-* ...
+## Payments BC
+
+```
+bundle exec rspec payments/spec/
+```
+
+## Orders BC
+
+```
+bundle exec rspec orders/spec/
+```
+
+# Services (job queues, cache servers, search engines, etc.)
