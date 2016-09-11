@@ -15,6 +15,10 @@ module Orders
 
     def add_item(sku:, quantity:, net_price:, vat_rate:)
       raise NotAllowed unless @state == :draft
+      raise ArgumentError unless sku.to_s.present?
+      raise ArgumentError unless quantity > 0
+      raise ArgumentError unless net_price > 0
+      raise ArgumentError if vat_rate < 0 || vat_rate >= 100
 
       net_value   = quantity * net_price
       vat_amount  = net_value * (vat_rate / 100.0.to_d)
