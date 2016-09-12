@@ -18,7 +18,8 @@ RSpec.describe OrdersService do
       )
     end
       .to change { Order.count }.by(1)
-      .and have_enqueued_job(ExpireOrderJob).with('12345')
+      .and have_enqueued_job(ExpireOrderJob)
+      .with(YAML.dump(Orders::ExpireOrderCommand.new(order_number: '12345')))
 
     expect(Order.find_by(number: '12345').state).to eq('submitted')
 

@@ -1,9 +1,8 @@
 class ExpireOrderJob < ApplicationJob
   queue_as :default
 
-  def perform(order_number)
+  def perform(serialized_command)
     OrdersService.new(store: Rails.application.config.event_store).call(
-      Orders::ExpireOrderCommand.new(order_number: order_number)
-    )
+      YAML.load(serialized_command))
   end
 end

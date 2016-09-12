@@ -36,7 +36,8 @@ class OrdersService
       end
       order.submit(customer_id: cmd.customer_id)
     end
-    ExpireOrderJob.set(wait: 15.minutes).perform_later(cmd.order_number)
+    ExpireOrderJob.set(wait: 15.minutes).perform_later(
+      YAML.dump(Orders::ExpireOrderCommand.new(order_number: cmd.order_number)))
   end
 
   def expire(cmd)
