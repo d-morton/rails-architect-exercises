@@ -35,6 +35,7 @@ class OrdersService
         order.add_item(item)
       end
       order.submit(customer_id: cmd.customer_id)
+      ExpireOrderJob.set(wait: 15.minutes).perform_later(cmd.order_number)
     end
   end
 

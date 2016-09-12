@@ -10,7 +10,6 @@ module ReadModel
         gross_value:    ev.data.gross_total,
         customer_name:  customer.name,
         state:          'submitted')
-      ExpireOrderJob.set(wait: 15.minutes).perform_later(ev.data.order_number)
     end
   end
 end
