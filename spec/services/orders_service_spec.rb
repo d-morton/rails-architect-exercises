@@ -18,7 +18,7 @@ RSpec.describe OrdersService do
       )
     end
       .to change { Order.count }.by(1)
-      .and have_enqueued_job(ExpireOrderJob)
+      .and have_enqueued_job(ExpireOrderHandler)
       .with do |serialized_event|
         event = YAML.load(serialized_event)
         expect(event.data.order_number).to eq('12345')

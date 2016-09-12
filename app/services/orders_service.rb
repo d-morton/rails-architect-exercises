@@ -39,7 +39,7 @@ class OrdersService
 
     event = Orders::OrderExpirationScheduled.new(data: { order_number: cmd.order_number })
     @store.publish_event(event, stream_name: cmd.order_number)
-    ExpireOrderJob.set(wait: 15.minutes).perform_later(YAML.dump(event))
+    ExpireOrderHandler.set(wait: 15.minutes).perform_later(YAML.dump(event))
   end
 
   def expire(cmd)

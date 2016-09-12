@@ -1,4 +1,4 @@
-class ExpireOrderJob < ApplicationJob
+class ExpireOrderHandler < ApplicationJob
   queue_as :default
 
   def perform(serialized_event)
