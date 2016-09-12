@@ -46,6 +46,7 @@ class OrdersService
     with_order(cmd.order_number) do |order|
       order.expire
     end
+  rescue Orders::Order::NotAllowed
   end
 
   def cancel(cmd)

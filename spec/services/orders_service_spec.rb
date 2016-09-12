@@ -77,7 +77,7 @@ RSpec.describe OrdersService do
     expect(Order.find_by(number: '12345').state).to eq('cancelled')
   end
 
-  it 'fails on expiring shipped order' do
+  it 'won\'t fail on expiring shipped order' do
     service = OrdersService.new(store: Rails.application.config.event_store)
     customer = Customer.create!(name: 'John')
 
@@ -95,6 +95,6 @@ RSpec.describe OrdersService do
           order_number: '12345'),
         Orders::ExpireOrderCommand.new(order_number: '12345')
       )
-    end.to raise_error(Orders::Order::NotAllowed)
+    end.not_to raise_error
   end
 end
