@@ -16,7 +16,9 @@ RSpec.describe OrdersService do
               net_price:  100.0,
               vat_rate:   0.23 }])
       )
-    end.to change { Order.count }.by(1)
+    end
+      .to change { Order.count }.by(1)
+      .and have_enqueued_job(ExpireOrderJob).with('12345')
 
     expect(Order.find_by(number: '12345').state).to eq('submitted')
 
