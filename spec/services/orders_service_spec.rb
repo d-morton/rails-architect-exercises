@@ -16,14 +16,7 @@ RSpec.describe OrdersService do
               net_price:  100.0,
               vat_rate:   0.23 }])
       )
-    end
-      .to change { Order.count }.by(1)
-      .and have_enqueued_job(ExpireOrderHandler)
-      .with do |serialized_event|
-        event = YAML.load(serialized_event)
-        expect(event.data.order_number).to eq('12345')
-        expect(event).to be_a(Orders::OrderExpirationScheduled)
-      end
+    end.to change { Order.count }.by(1)
 
     expect(Order.find_by(number: '12345').state).to eq('submitted')
 
@@ -35,6 +28,28 @@ RSpec.describe OrdersService do
     end.not_to change { Order.count }
 
     expect(Order.find_by(number: '12345').state).to eq('delivered')
+  end
+
+  it 'schedules order expiration on order flow' do
+    service = OrdersService.new(store: Rails.application.config.event_store)
+    customer = Customer.create!(name: 'John')
+
+    expect do
+      service.call(
+        Orders::SubmitOrderCommand.new(
+          order_number: '12345',
+          customer_id:  customer.id,
+          items:        [
+            { sku:        123,
+              quantity:   2,
+              net_price:  100.0,
+              vat_rate:   0.23 }])
+      )
+    end.to have_enqueued_job(ExpireOrderHandler).with do |serialized_event|
+      event = YAML.load(serialized_event)
+      expect(event.data.order_number).to eq('12345')
+      expect(event).to be_a(Orders::OrderExpirationScheduled)
+    end
   end
 
   it 'expired order flow' do
