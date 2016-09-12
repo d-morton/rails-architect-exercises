@@ -39,6 +39,7 @@ group :test do
   gem 'rspec-rails',               '~> 3.5'
   gem 'rspec-collection_matchers', require: false
   gem 'rspec-activemodel-mocks',   require: false
+  gem 'database_cleaner',          require: false
 end
 
 group :development do

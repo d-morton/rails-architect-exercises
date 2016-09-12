@@ -6,6 +6,7 @@ require_relative '../rails_event_store-matchers/lib/rails_event_store-matchers'
 require 'rspec/rails'
 require 'rspec/collection_matchers'
 require 'rspec/active_model/mocks'
+require 'database_cleaner'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -19,6 +20,20 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.order = :random
   Kernel.srand(config.seed)
+
+  config.before(:suite) do
+    DatabaseCleaner.clean_with :truncation
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
 end
 
 RspecFriendlyRandom = Random.new(RSpec.configuration.seed)
+
