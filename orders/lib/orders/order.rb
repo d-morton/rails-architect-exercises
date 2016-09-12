@@ -75,11 +75,12 @@ module Orders
     def apply_strategy
       ->(aggregate, event) {
         {
-          Orders::OrderItemAdded  => aggregate.method(:apply_item_added),
-          Orders::OrderSubmitted  => aggregate.method(:apply_submitted),
-          Orders::OrderCancelled  => aggregate.method(:apply_cancelled),
-          Orders::OrderExpired    => aggregate.method(:apply_expired),
-          Orders::OrderShipped    => aggregate.method(:apply_shipped),
+          Orders::OrderItemAdded           => aggregate.method(:apply_item_added),
+          Orders::OrderSubmitted           => aggregate.method(:apply_submitted),
+          Orders::OrderCancelled           => aggregate.method(:apply_cancelled),
+          Orders::OrderExpirationScheduled => ->(_) {},
+          Orders::OrderExpired             => aggregate.method(:apply_expired),
+          Orders::OrderShipped             => aggregate.method(:apply_shipped),
         }.fetch(event.class).call(event)
       }
     end

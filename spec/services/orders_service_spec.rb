@@ -19,7 +19,11 @@ RSpec.describe OrdersService do
     end
       .to change { Order.count }.by(1)
       .and have_enqueued_job(ExpireOrderJob)
-      .with(YAML.dump(Orders::ExpireOrderCommand.new(order_number: '12345')))
+      .with do |serialized_event|
+        event = YAML.load(serialized_event)
+        expect(event.data.order_number).to eq('12345')
+        expect(event).to be_a(Orders::OrderExpirationScheduled)
+      end
 
     expect(Order.find_by(number: '12345').state).to eq('submitted')
 
@@ -71,5 +75,26 @@ RSpec.describe OrdersService do
     )
 
     expect(Order.find_by(number: '12345').state).to eq('cancelled')
+  end
+
+  it 'fails on expiring shipped order' do
+    service = OrdersService.new(store: Rails.application.config.event_store)
+    customer = Customer.create!(name: 'John')
+
+    expect do
+      service.call(
+        Orders::SubmitOrderCommand.new(
+          order_number: '12345',
+          customer_id:  customer.id,
+          items:        [
+            { sku:        123,
+              quantity:   2,
+              net_price:  100.0,
+              vat_rate:   0.23 }]),
+        Orders::ShipOrderCommand.new(
+          order_number: '12345'),
+        Orders::ExpireOrderCommand.new(order_number: '12345')
+      )
+    end.to raise_error(Orders::Order::NotAllowed)
   end
 end
