@@ -18,8 +18,9 @@ module CqrsEsSampleWithResNew
     config.event_store = RailsEventStore::Client.new
 
     config.generators do |generate|
-      generate.helper          false
-      generate.assets          false
+      generate.helper false
+      generate.assets false
+      generate.test_framework :rspec
     end
   end
 end
