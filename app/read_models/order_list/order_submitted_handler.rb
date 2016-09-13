@@ -1,4 +1,4 @@
-module ReadModel
+module OrderList
   class OrderSubmittedHandler
     def call(ev)
       customer = Customer.find(ev.data.customer_id)

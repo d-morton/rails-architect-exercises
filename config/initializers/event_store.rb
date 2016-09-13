@@ -3,11 +3,12 @@ def instance_of(klass, *args)
 end
 
 Rails.application.config.event_store.tap do |es|
-  es.subscribe(instance_of(ReadModel::OrderSubmittedHandler), [Orders::OrderSubmitted])
-  es.subscribe(instance_of(ReadModel::OrderCancelledHandler), [Orders::OrderCancelled])
-  es.subscribe(instance_of(ReadModel::OrderShippedHandler), [Orders::OrderShipped])
-  es.subscribe(instance_of(ReadModel::OrderExpiredHandler), [Orders::OrderExpired])
+  es.subscribe(instance_of(OrderList::OrderSubmittedHandler), [Orders::OrderSubmitted])
+  es.subscribe(instance_of(OrderList::OrderCancelledHandler), [Orders::OrderCancelled])
+  es.subscribe(instance_of(OrderList::OrderShippedHandler), [Orders::OrderShipped])
+  es.subscribe(instance_of(OrderList::OrderExpiredHandler), [Orders::OrderExpired])
+  es.subscribe(instance_of(OrderList::OrderPaidHandler), [Payments::PaymentAuthorized])
+  es.subscribe(instance_of(OrderList::OrderPaymentFailedHandler), [Payments::PaymentAuthorizationFailed])
+
   es.subscribe(instance_of(Orders::ScheduleExpireOnSubmit, ExpireOrderJob), [Orders::OrderSubmitted])
-  es.subscribe(instance_of(ReadModel::OrderPaidHandler), [Payments::PaymentAuthorized])
-  es.subscribe(instance_of(ReadModel::OrderPaymentFailedHandler), [Payments::PaymentAuthorizationFailed])
 end

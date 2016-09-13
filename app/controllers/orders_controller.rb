@@ -1,10 +1,10 @@
 class OrdersController < ApplicationController
   def index
-    @orders = Order.all
+    @orders = OrderList::Order.all
   end
 
   def show
-    order = Order.find(params[:id])
+    order = OrderList::Order.find(params[:id])
     @history = Rails.application.config.event_store.read_stream_events_backward("#{order.number}")
   end
 
@@ -27,7 +27,7 @@ class OrdersController < ApplicationController
   end
 
   def destroy
-    order = Order.find(params[:id])
+    order = OrderList::Order.find(params[:id])
     cmd = Orders::CancelOrderCommand.new(order_number: order.number)
     service.call(cmd)
     redirect_to orders_url, notice: 'Order was cancelled.'
@@ -40,7 +40,7 @@ class OrdersController < ApplicationController
   end
 
   def ship
-    order = Order.find(params[:order_id])
+    order = OrderList::Order.find(params[:order_id])
     cmd = Orders::ShipOrderCommand.new(order_number: order.number)
     service.call(cmd)
     redirect_to orders_url, notice: 'Order shipment was initiated.'

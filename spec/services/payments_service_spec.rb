@@ -47,8 +47,8 @@ RSpec.describe PaymentsService do
           total_amount: 281.0,
           card_number:  '4242424242424242')
       )
-    end.not_to change { Order.count }
-    expect(Order.find_by(number: '12345').state).to eq('paid')
+    end.not_to change { OrderList::Order.count }
+    expect(OrderList::Order.find_by(number: '12345').state).to eq('paid')
   end
 
   it 'unsuccessful payment flow' do
@@ -74,7 +74,7 @@ RSpec.describe PaymentsService do
           total_amount: 281.0,
           card_number:  'invalid card number')
       )
-    end.not_to change { Order.count }
-    expect(Order.find_by(number: '12345').state).to eq('payment failed')
+    end.not_to change { OrderList::Order.count }
+    expect(OrderList::Order.find_by(number: '12345').state).to eq('payment failed')
   end
 end

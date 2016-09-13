@@ -1,4 +1,4 @@
-module ReadModel
+module OrderList
   class OrderExpiredHandler
     def call(ev)
       order = Order.find_by(number: ev.data.order_number)

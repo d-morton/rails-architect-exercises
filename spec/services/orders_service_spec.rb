@@ -16,18 +16,18 @@ RSpec.describe OrdersService do
               net_price:  100.0,
               vat_rate:   0.23 }])
       )
-    end.to change { Order.count }.by(1)
+    end.to change { OrderList::Order.count }.by(1)
 
-    expect(Order.find_by(number: '12345').state).to eq('submitted')
+    expect(OrderList::Order.find_by(number: '12345').state).to eq('submitted')
 
     expect do
       service.call(
         Orders::ShipOrderCommand.new(
           order_number: '12345')
       )
-    end.not_to change { Order.count }
+    end.not_to change { OrderList::Order.count }
 
-    expect(Order.find_by(number: '12345').state).to eq('delivered')
+    expect(OrderList::Order.find_by(number: '12345').state).to eq('delivered')
   end
 
   it 'expired order flow' do
@@ -47,7 +47,7 @@ RSpec.describe OrdersService do
         order_number: '12345'),
     )
 
-    expect(Order.find_by(number: '12345').state).to eq('expired')
+    expect(OrderList::Order.find_by(number: '12345').state).to eq('expired')
   end
 
   it 'cancelled order flow' do
@@ -67,7 +67,7 @@ RSpec.describe OrdersService do
         order_number: '12345'),
     )
 
-    expect(Order.find_by(number: '12345').state).to eq('cancelled')
+    expect(OrderList::Order.find_by(number: '12345').state).to eq('cancelled')
   end
 
   it 'won\'t fail on expiring shipped order' do
