@@ -3,6 +3,7 @@ require_relative 'boot'
 require 'rails/all'
 require 'rails_event_store'
 require_relative '../orders/lib/orders'
+require_relative '../payments/lib/payments'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
