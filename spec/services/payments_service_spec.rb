@@ -1,7 +1,8 @@
 require_relative '../spec_helper'
 
 class TestPaymentGateway
-  PaymentNotAuthorized = Class.new(StandardError)
+  AuthorizationFailed = Class.new(StandardError)
+  NotAuthorized       = Class.new(StandardError)
 
   def initialize
     @authorized = []
@@ -9,16 +10,16 @@ class TestPaymentGateway
 
   def authorize(total_amount, card_number)
     card_valid = card_number == '4242424242424242'
-    raise Payments::PaymentGateway::AuthorizationFailed unless card_valid
+    raise AuthorizationFailed unless card_valid
     SecureRandom.hex(16)
   end
 
   def capture(transaction_identifier)
-    raise PaymentNotAuthorized unless @authorized.include?(transaction_identifier)
+    raise NotAuthorized unless @authorized.include?(transaction_identifier)
   end
 
   def release(transaction_identifier)
-    raise PaymentNotAuthorized unless @authorized.include?(transaction_identifier)
+    raise NotAuthorized unless @authorized.include?(transaction_identifier)
   end
 end
 

@@ -18,7 +18,7 @@ module Payments
 
     it 'reject authorization of payment with invalid CC number' do
       adapter = double(:adapter)
-      expect(adapter).to receive(:authorize).with(123.34, 'invalid').and_raise(PaymentGateway::AuthorizationFailed)
+      expect(adapter).to receive(:authorize).with(123.34, 'invalid').and_raise(StandardError)
       payment = Payment.new(transaction_identifier: nil, payment_gateway: adapter)
       expect{ payment.authorize(order_number: '12345',
         total_amount: 123.34,
