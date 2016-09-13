@@ -8,4 +8,6 @@ Rails.application.config.event_store.tap do |es|
   es.subscribe(instance_of(ReadModel::OrderShippedHandler), [Orders::OrderShipped])
   es.subscribe(instance_of(ReadModel::OrderExpiredHandler), [Orders::OrderExpired])
   es.subscribe(instance_of(Orders::ScheduleExpireOnSubmit, ExpireOrderJob), [Orders::OrderSubmitted])
+  es.subscribe(instance_of(ReadModel::OrderPaidHandler), [Payments::PaymentAuthorized])
+  es.subscribe(instance_of(ReadModel::OrderPaymentFailedHandler), [Payments::PaymentAuthorizationFailed])
 end
