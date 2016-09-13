@@ -6,13 +6,13 @@ module Payments
     NotAuthorized                     = Class.new(StandardError)
     InvalidOperation                  = Class.new(StandardError)
 
-    def initialize(id: SecureRandom.uuid, payment_gateway:)
-      self.id           = id
+    def initialize(transaction_identifier:, payment_gateway:)
+      self.id           = transaction_identifier
       @payment_gateway  = payment_gateway
     end
 
     def authorize(order_number:, total_amount:, card_number:)
-      raise InvalidOperation if @transaction_identifier
+      raise InvalidOperation if self.id
       raise InvalidOperation if captured? || released?
       begin
         transaction_identifier = @payment_gateway.authorize(total_amount, card_number)
@@ -26,21 +26,21 @@ module Payments
     end
 
     def capture
-      raise NotAuthorized unless @transaction_identifier
+      raise NotAuthorized unless self.id
       raise InvalidOperation if captured? || released?
-      @payment_gateway.capture(@transaction_identifier)
+      @payment_gateway.capture(self.id)
       apply(PaymentCaptured.new(data: {
         order_number: @order_number,
-        transaction_identifier: @transaction_identifier}))
+        transaction_identifier: self.id}))
     end
 
     def release
-      raise NotAuthorized unless @transaction_identifier
+      raise NotAuthorized unless self.id
       raise InvalidOperation if released?
-      @payment_gateway.release(@transaction_identifier)
+      @payment_gateway.release(self.id)
       apply(PaymentReleased.new(data: {
         order_number: @order_number,
-        transaction_identifier: @transaction_identifier}))
+        transaction_identifier: self.id}))
     end
 
     private
@@ -66,11 +66,12 @@ module Payments
     def apply_authorized(ev)
       @authorized = true
       @order_number = ev.data.order_number
-      @transaction_identifier = ev.data.transaction_identifier
+      self.id = ev.data.transaction_identifier
     end
 
     def apply_authorize_failed(ev)
       @order_number = ev.data.order_number
+      self.id = 'failed-transactions'
     end
 
     def apply_captured(ev)
