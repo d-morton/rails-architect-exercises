@@ -60,7 +60,7 @@ module Orders
     end
 
     def expire
-      raise NotAllowed unless [:draft, :submitted].include?(@state)
+      return if [:expired, :shipped].include?(@state)
       apply(OrderExpired.new(data: {
         order_number: id}))
     end
