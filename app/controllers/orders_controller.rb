@@ -36,7 +36,7 @@ class OrdersController < ApplicationController
   end
 
   def pay
-    redirect_to orders_url, notice: "TBD..."
+    @order = OrderList::Order.find(params[:order_id])
   end
 
   def ship

@@ -27,7 +27,7 @@
         <td><%= order.gross_value %></td>
         <td><%= order.customer_name %></td>
         <td><%= order.state %></td>
-        <td><%= link_to 'Pay', order_pay_path(order), method: :post, class: 'btn btn-default' %></td>
+        <td><%= link_to 'Pay', order_pay_path(order), class: 'btn btn-default' %></td>
         <td><%= link_to 'Ship', order_ship_path(order), method: :post, class: 'btn btn-default' %></td>
         <td><%= link_to 'Cancel', order_path(order), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-default' %></td>
         <td><%= link_to 'History', order_path(order), class: 'btn btn-default' %></td>
