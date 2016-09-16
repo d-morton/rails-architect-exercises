@@ -84,7 +84,9 @@ module Orders
                            vat_total:     46.0,
                            gross_total:   246.0,
                            fee:           0.0 }),
-        OrderShipped.new(data: { order_number:    '12345' }),
+        OrderShipped.new(data: { order_number:    '12345',
+                                 customer_id:   123,
+        }),
       ]
     end
 

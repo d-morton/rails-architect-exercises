@@ -58,3 +58,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'bootstrap-sass', '3.3.7'
 gem 'rails_event_store', '0.12.1'
 gem 'arkency-command_bus'
+gem 'classy_hash'

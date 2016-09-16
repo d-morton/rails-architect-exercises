@@ -67,8 +67,10 @@ module Orders
 
     def ship
       raise NotAllowed unless @state == :submitted
-      apply(OrderShipped.new(data: {
-        order_number: id}))
+      apply(OrderShipped.strict(data: {
+        order_number: id,
+        customer_id: @customer_id,
+      }))
     end
 
     private
@@ -97,6 +99,7 @@ module Orders
 
     def apply_submitted(ev)
       @state = :submitted
+      @customer_id = ev.data.customer_id
     end
 
     def apply_cancelled(ev)
