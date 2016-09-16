@@ -19,6 +19,8 @@ RSpec.configure do |config|
   end
   config.disable_monkey_patching!
   config.order = :random
+  config.formatter = :documentation
+  
   Kernel.srand(config.seed)
 
   config.before(:suite) do
