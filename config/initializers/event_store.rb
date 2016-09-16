@@ -11,4 +11,6 @@ Rails.application.config.event_store.tap do |es|
   es.subscribe(instance_of(OrderList::OrderPaymentFailedHandler), [Payments::PaymentAuthorizationFailed])
 
   es.subscribe(instance_of(Orders::ScheduleExpireOnSubmit, ExpireOrderJob), [Orders::OrderSubmitted])
+
+  es.subscribe(->(event){ Discounts::Saga.perform_later(YAML.dump(event)) }, [Orders::OrderShipped])
 end
