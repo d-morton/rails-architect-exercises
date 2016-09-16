@@ -1,5 +1,3 @@
-require_relative 'spec_helper'
-
 FakeExpireOrderJob = Class.new(ActiveJob::Base)
 
 module Orders

@@ -1,5 +1,3 @@
-require_relative 'spec_helper'
-
 module Payments
   RSpec.describe Payment do
     it 'authorize payment with valid CC number' do

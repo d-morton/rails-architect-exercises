@@ -36,4 +36,3 @@ RSpec.configure do |config|
 end
 
 RspecFriendlyRandom = Random.new(RSpec.configuration.seed)
-
