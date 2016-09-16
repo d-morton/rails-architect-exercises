@@ -15,6 +15,7 @@ module CqrsEsSampleWithResNew
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
     config.paths.add 'orders/lib',           eager_load: true
+    config.paths.add 'discounts/lib',        eager_load: true
 
     config.event_store = RailsEventStore::Client.new
 

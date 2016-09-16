@@ -10,12 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160913234024) do
+ActiveRecord::Schema.define(version: 20160916075941) do
 
   create_table "customers", force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "discount_sagas", force: :cascade do |t|
+    t.integer "customer_id", null: false
+    t.string  "state",       null: false
+    t.binary  "data"
+    t.index ["customer_id"], name: "index_active_discount_sagas_on_customer_id", unique: true, where: "state = 'active'"
+    t.index ["customer_id"], name: "index_discount_sagas_on_customer_id"
   end
 
   create_table "event_store_events", force: :cascade do |t|
