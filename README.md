@@ -1,6 +1,6 @@
 # Ruby version
 
-Ruby `2.3.*` recommended (2.2.2+)
+Ruby `2.3.*` recommended
 
 # System dependencies
 
