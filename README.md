@@ -18,18 +18,6 @@ make init
 make dev
 ```
 
-# Runs tests for Orders BC
-
-```
-make orders-spec
-```
-
-# Runs tests for Payments BC
-
-```
-make payments-spec
-```
-
 # How to run the test suite
 
 ## Full
