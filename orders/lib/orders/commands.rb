@@ -3,11 +3,14 @@ module Orders
     include Command
 
     attr_accessor :order_number
-    attr_accessor :customer_id
+    attr_reader :customer_id
     attr_accessor :items
 
     validates_presence_of :order_number, :customer_id, :items
-    validates :customer_id, numericality: { only_integer: true }
+
+    def customer_id=(int)
+      @customer_id = Integer(int)
+    end
   end
 
   class ExpireOrderCommand
