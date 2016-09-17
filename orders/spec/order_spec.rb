@@ -111,5 +111,19 @@ module Orders
       order.expire
       expect{ order.expire }.not_to change{ order.unpublished_events }
     end
+
+    it 'rejects negative vat rates' do
+      order = Order.new(number: '12345')
+      expect do
+        order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: -1)
+      end.to raise_error(ArgumentError)
+    end
+
+    it 'rejects above 100 vat rates' do
+      order = Order.new(number: '12345')
+      expect do
+        order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 101)
+      end.to raise_error(ArgumentError)
+    end
   end
 end
