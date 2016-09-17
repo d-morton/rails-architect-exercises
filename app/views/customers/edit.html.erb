@@ -1,5 +1,7 @@
 <% provide(:title, 'Edit customer') %>
 <h1>Editing Customer</h1>
 
-<%= render 'form', customer: @customer %>
+<%= form_for(@customer, url: customer_path(@customer), as: :customer) do |f| %>
+  <%= render 'form', customer: @customer, f: f %>
+<% end %>
 <%= link_to 'Back', customers_path, class: 'btn btn-default' %>

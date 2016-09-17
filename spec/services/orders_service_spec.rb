@@ -3,7 +3,7 @@ require_relative '../spec_helper'
 RSpec.describe OrdersService do
   it 'successful order flow' do
     service = OrdersService.new(store: Rails.application.config.event_store)
-    customer = Customer.create!(name: 'John')
+    customer = Orders::Customer.create!(name: 'John')
 
     expect do
       service.call(
@@ -32,7 +32,7 @@ RSpec.describe OrdersService do
 
   it 'expired order flow' do
     service = OrdersService.new(store: Rails.application.config.event_store)
-    customer = Customer.create!(name: 'John')
+    customer = Orders::Customer.create!(name: 'John')
 
     service.call(
       Orders::SubmitOrderCommand.new(
@@ -52,7 +52,7 @@ RSpec.describe OrdersService do
 
   it 'cancelled order flow' do
     service = OrdersService.new(store: Rails.application.config.event_store)
-    customer = Customer.create!(name: 'John')
+    customer = Orders::Customer.create!(name: 'John')
 
     service.call(
       Orders::SubmitOrderCommand.new(
@@ -72,7 +72,7 @@ RSpec.describe OrdersService do
 
   it 'won\'t fail on expiring shipped order' do
     service = OrdersService.new(store: Rails.application.config.event_store)
-    customer = Customer.create!(name: 'John')
+    customer = Orders::Customer.create!(name: 'John')
 
     expect do
       service.call(

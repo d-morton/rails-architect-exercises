@@ -10,7 +10,7 @@ class OrdersController < ApplicationController
 
   def new
     @products  = Product.all
-    @customers = Customer.all
+    @customers = Orders::Customer.all
   end
 
   def create

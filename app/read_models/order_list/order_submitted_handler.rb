@@ -1,7 +1,7 @@
 module OrderList
   class OrderSubmittedHandler
     def call(ev)
-      customer = Customer.find(ev.data.customer_id)
+      customer = Orders::Customer.find(ev.data.customer_id)
       Order.create!(
         number:         ev.data.order_number,
         items_count:    ev.data.items_count,

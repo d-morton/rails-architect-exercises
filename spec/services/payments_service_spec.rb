@@ -28,7 +28,7 @@ RSpec.describe PaymentsService do
     orders_service   = OrdersService.new(store: Rails.application.config.event_store)
     payments_service = PaymentsService.new(store: Rails.application.config.event_store,
                                            payment_gateway: TestPaymentGateway.new)
-    customer = Customer.create!(name: 'John')
+    customer = Orders::Customer.create!(name: 'John')
     orders_service.call(
       Orders::SubmitOrderCommand.new(
         order_number: '12345',
@@ -55,7 +55,7 @@ RSpec.describe PaymentsService do
     orders_service   = OrdersService.new(store: Rails.application.config.event_store)
     payments_service = PaymentsService.new(store: Rails.application.config.event_store,
                                            payment_gateway: TestPaymentGateway.new)
-    customer = Customer.create!(name: 'John')
+    customer = Orders::Customer.create!(name: 'John')
     orders_service.call(
       Orders::SubmitOrderCommand.new(
         order_number: '12345',
