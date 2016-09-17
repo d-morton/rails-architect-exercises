@@ -1,8 +1,6 @@
 module Orders
 end
 
-require_relative '../../command/lib/command'
-
-require_relative 'orders/domain_events'
-require_relative 'orders/commands'
-require_relative 'orders/order'
+require_dependency 'orders/domain_events'
+require_dependency 'orders/commands'
+require_dependency 'orders/order'
