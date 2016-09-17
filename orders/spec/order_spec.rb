@@ -29,7 +29,7 @@ module Orders
     it 'cancelled order could not be modified, submitted or shipped' do
       order = Order.new(number: '12345')
       order.cancel
-      expect{ order.add_item(sku: 123, quantity: 1, net_price: 100.0, vat_rate: 0.23)}.to raise_error(Order::NotAllowed)
+      expect{ order.add_item(sku: 123, quantity: 1, net_price: 100.0, vat_rate: 23)}.to raise_error(Order::NotAllowed)
       expect{ order.submit(customer_id: 123)}.to raise_error(Order::NotAllowed)
       expect{ order.ship }.to raise_error(Order::NotAllowed)
     end
@@ -90,7 +90,7 @@ module Orders
 
     it 'shipped order could not be cancelled' do
       order = Order.new(number: '12345')
-      order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 0.23)
+      order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 23)
       order.submit(customer_id: 123)
       order.ship
       expect{ order.cancel }.to raise_error(Order::NotAllowed)
@@ -98,7 +98,7 @@ module Orders
 
     it 'shipped order won\'t expire' do
       order = Order.new(number: '12345')
-      order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 0.23)
+      order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 23)
       order.submit(customer_id: 123)
       order.ship
       expect{ order.expire }.not_to change{ order.unpublished_events }
@@ -106,7 +106,7 @@ module Orders
 
     it 'expired order won\'t expire again' do
       order = Order.new(number: '12345')
-      order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 0.23)
+      order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 23)
       order.submit(customer_id: 123)
       order.expire
       expect{ order.expire }.not_to change{ order.unpublished_events }
