@@ -1,6 +1,8 @@
 <% provide(:title, 'New product') %>
 <h1>New Product</h1>
 
-<%= render 'form', product: @product %>
+<%= form_for(@product, url: products_path, as: :product) do |f| %>
+  <%= render 'form', product: @product, f: f %>
+<% end %>
 
 <%= link_to 'Back', products_path, class: 'btn btn-default' %>

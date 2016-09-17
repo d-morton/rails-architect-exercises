@@ -9,7 +9,7 @@ class OrdersController < ApplicationController
   end
 
   def new
-    @products  = Product.all
+    @products  = Orders::Product.all
     @customers = Orders::Customer.all
   end
 
@@ -59,7 +59,7 @@ class OrdersController < ApplicationController
 
   def order_items
     items = params[:quantity].map(&:to_i).map.with_index { |quantity,index|
-      [quantity, Product.find(params[:products][index])] if quantity > 0
+      [quantity, Orders::Product.find(params[:products][index])] if quantity > 0
     }.compact.to_h
     items.map {|q, p|
       {sku: p.id, quantity: q, net_price: p.net_price, vat_rate: p.vat_rate}
