@@ -88,18 +88,18 @@ module Orders
 
     def apply_item_added(ev)
       @items << {
-        sku:          ev.data.sku,
-        quantity:     ev.data.quantity,
-        net_price:    ev.data.net_price,
-        net_value:    ev.data.net_value,
-        vat_amount:   ev.data.vat_amount,
-        gross_value:  ev.data.gross_value,
+        sku:          ev.data[:sku],
+        quantity:     ev.data[:quantity],
+        net_price:    ev.data[:net_price],
+        net_value:    ev.data[:net_value],
+        vat_amount:   ev.data[:vat_amount],
+        gross_value:  ev.data[:gross_value],
       }
     end
 
     def apply_submitted(ev)
       @state = :submitted
-      @customer_id = ev.data.customer_id
+      @customer_id = ev.data[:customer_id]
     end
 
     def apply_cancelled(ev)

@@ -27,12 +27,12 @@ module Discounts
 
     def perform(serialized_event)
       event = YAML.load(serialized_event)
-      State.get_by_customer_id(event.data.customer_id) do |state|
+      State.get_by_customer_id(event.data[:customer_id]) do |state|
         case event
           when Orders::OrderShipped
-            state.data[:orders] += [event.data.order_number]
+            state.data[:orders] += [event.data[:order_number]]
             state.data[:orders] = state.data[:orders].uniq
-            Discounts::Saga.set(wait: 1.month).perform_later(YAML.dump( DiscardForDiscounts.new(event.data.order_number, event.data.customer_id) ))
+            Discounts::Saga.set(wait: 1.month).perform_later(YAML.dump( DiscardForDiscounts.new(event.data[:order_number], event.data[:customer_id]) ))
           when DiscardForDiscounts
             state.data[:orders] -= [event.order_number]
           else

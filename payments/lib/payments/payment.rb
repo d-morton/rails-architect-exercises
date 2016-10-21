@@ -65,12 +65,12 @@ module Payments
 
     def apply_authorized(ev)
       @authorized = true
-      @order_number = ev.data.order_number
-      self.id = ev.data.transaction_identifier
+      @order_number = ev.data[:order_number]
+      self.id = ev.data[:transaction_identifier]
     end
 
     def apply_authorize_failed(ev)
-      @order_number = ev.data.order_number
+      @order_number = ev.data[:order_number]
       self.id = 'failed-transactions'
     end
 

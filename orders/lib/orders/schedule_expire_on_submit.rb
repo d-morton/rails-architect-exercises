@@ -5,7 +5,7 @@ module Orders
     end
 
     def call(event)
-      @handler_class.set(wait: 15.minutes).perform_later(event.data.order_number)
+      @handler_class.set(wait: 15.minutes).perform_later(event.data[:order_number])
     end
   end
 end
