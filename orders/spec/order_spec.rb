@@ -1,10 +1,5 @@
 module Orders
   RSpec.describe Order do
-    it 'order number is an aggregate id' do
-      order = Order.new(number: '12345')
-      expect(order.id).to eq('12345')
-    end
-
     it 'newly created order could be cancelled' do
       order = Order.new(number: '12345')
       expect{ order.cancel }.not_to raise_error
@@ -101,7 +96,9 @@ module Orders
       order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 23)
       order.submit(customer_id: 123)
       order.ship
-      expect{ order.expire }.not_to change{ order.unpublished_events }
+      expect(order).not_to publish [
+        OrderExpired.new(data: { order_number: '12345' }),
+      ]
     end
 
     it 'expired order won\'t expire again' do
@@ -109,7 +106,9 @@ module Orders
       order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 23)
       order.submit(customer_id: 123)
       order.expire
-      expect{ order.expire }.not_to change{ order.unpublished_events }
+      expect(order).not_to publish [
+        OrderExpired.new(data: { order_number: '12345' }),
+      ]
     end
 
     it 'rejects negative vat rates' do
