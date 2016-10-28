@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
 
   def show
     order = OrderList::Order.find(params[:id])
-    @history = Rails.application.config.event_store.read_stream_events_backward("#{order.number}")
+    @history = Rails.application.config.event_store.read_stream_events_backward("Order$#{order.number}")
   end
 
   def new
