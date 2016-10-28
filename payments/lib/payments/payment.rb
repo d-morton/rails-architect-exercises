@@ -14,7 +14,7 @@ module Payments
       raise InvalidOperation if authorized?
       raise InvalidOperation if captured? || released?
       begin
-        transaction_identifier = @payment_gateway.authorize(total_amount, card_number)
+        transaction_identifier = payment_gateway.authorize(total_amount, card_number)
         apply(PaymentAuthorized.new(data: {
           order_number: order_number,
           transaction_identifier: transaction_identifier}))
@@ -44,16 +44,18 @@ module Payments
 
     attr_reader :transaction_identifier
     private
+    attr_reader :payment_gateway, :order_number, :authorized, :captured, :released
+
     def authorized?
       authorized
     end
 
     def captured?
-      @captured
+      captured
     end
 
     def released?
-      @released
+      released
     end
 
     def apply_strategy

@@ -14,7 +14,7 @@ module Orders
     end
 
     def add_item(sku:, quantity:, net_price:, vat_rate:)
-      raise NotAllowed unless @state == :draft
+      raise NotAllowed unless state == :draft
       raise ArgumentError unless sku.to_s.present?
       raise ArgumentError unless quantity > 0
       raise ArgumentError unless net_price > 0
@@ -35,18 +35,18 @@ module Orders
     end
 
     def submit(customer_id:)
-      raise NotAllowed unless @state == :draft
-      raise Invalid    if @items.empty?
+      raise NotAllowed unless state == :draft
+      raise Invalid    if items.empty?
 
-      net_total = @items.sum{|i| i[:net_value]}
-      gross_total = @items.sum{|i| i[:gross_value]}
-      fee = @fee_calculator.call(gross_total)
-      vat_total = @items.sum{|i| i[:vat_amount]}
+      net_total = items.sum{|i| i[:net_value]}
+      gross_total = items.sum{|i| i[:gross_value]}
+      fee = fee_calculator.call(gross_total)
+      vat_total = items.sum{|i| i[:vat_amount]}
 
       apply(OrderSubmitted.new(data: {
         order_number: number,
         customer_id:  customer_id,
-        items_count:  @items.sum{|i| i[:quantity]},
+        items_count:  items.sum{|i| i[:quantity]},
         net_total:    net_total,
         vat_total:    vat_total,
         gross_total:  gross_total,
@@ -54,26 +54,28 @@ module Orders
     end
 
     def cancel
-      raise NotAllowed unless [:draft, :submitted].include?(@state)
+      raise NotAllowed unless [:draft, :submitted].include?(state)
       apply(OrderCancelled.new(data: {
-        order_number: id}))
+        order_number: number}))
     end
 
     def expire
-      return if [:expired, :shipped].include?(@state)
+      return if [:expired, :shipped].include?(state)
       apply(OrderExpired.new(data: {
-        order_number: id}))
+        order_number: number}))
     end
 
     def ship
-      raise NotAllowed unless @state == :submitted
+      raise NotAllowed unless state == :submitted
       apply(OrderShipped.strict(data: {
-        order_number: id,
-        customer_id: @customer_id,
+        order_number: number,
+        customer_id: customer_id,
       }))
     end
 
     private
+    attr_reader :number, :state, :items, :fee_calculator, :customer_id
+
     def apply_strategy
       ->(aggregate, event) {
         {
