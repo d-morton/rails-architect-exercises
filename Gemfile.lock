@@ -38,7 +38,7 @@ GEM
       i18n (~> 0.7)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    aggregate_root (0.3.6)
+    aggregate_root (0.4.0)
       activesupport (>= 3.0)
     arel (7.1.1)
     arkency-command_bus (0.4.0)
@@ -120,10 +120,10 @@ GEM
       nokogiri (~> 1.6.0)
     rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
-    rails_event_store (0.13.0)
+    rails_event_store (0.14.0)
       activemodel (>= 3.0)
       activesupport (>= 3.0)
-      aggregate_root (~> 0.3.6)
+      aggregate_root (~> 0.4.0)
       rails_event_store_active_record (~> 0.6.9)
       ruby_event_store (~> 0.13.0)
     rails_event_store_active_record (0.6.9)
@@ -215,7 +215,7 @@ DEPENDENCIES
   pry
   puma (~> 3.0)
   rails (~> 5.0.0)
-  rails_event_store (= 0.13.0)
+  rails_event_store (= 0.14.0)
   rspec-activemodel-mocks
   rspec-collection_matchers
   rspec-rails (~> 3.5)
