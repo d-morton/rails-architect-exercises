@@ -3,7 +3,7 @@ module Payments
     it 'authorize payment with valid CC number' do
       adapter = double(:adapter)
       expect(adapter).to receive(:authorize).with(123.34, '4242424242424242').and_return('123144567813u4132rt78rgfwbd234567890')
-      payment = Payment.new(transaction_identifier: nil, payment_gateway: adapter)
+      payment = Payment.new(payment_gateway: adapter)
       expect{ payment.authorize(order_number: '12345',
         total_amount: 123.34,
         card_number:  '4242424242424242') }.not_to raise_error
@@ -17,7 +17,7 @@ module Payments
     it 'reject authorization of payment with invalid CC number' do
       adapter = double(:adapter)
       expect(adapter).to receive(:authorize).with(123.34, 'invalid').and_raise(StandardError)
-      payment = Payment.new(transaction_identifier: nil, payment_gateway: adapter)
+      payment = Payment.new(payment_gateway: adapter)
       expect{ payment.authorize(order_number: '12345',
         total_amount: 123.34,
         card_number:  'invalid') }.not_to raise_error
@@ -28,7 +28,7 @@ module Payments
     end
 
     it 'fails to capture or release not authorized payment' do
-      payment = Payment.new(transaction_identifier: nil, payment_gateway: nil)
+      payment = Payment.new(payment_gateway: nil)
       expect{ payment.capture }.to raise_error(Payment::NotAuthorized)
       expect{ payment.release }.to raise_error(Payment::NotAuthorized)
     end
@@ -37,7 +37,7 @@ module Payments
       adapter = double(:adapter)
       expect(adapter).to receive(:authorize).with(123.34, '4242424242424242').and_return('123144567813u4132rt78rgfwbd234567890')
       expect(adapter).to receive(:capture).with('123144567813u4132rt78rgfwbd234567890')
-      payment = Payment.new(transaction_identifier: nil, payment_gateway: adapter)
+      payment = Payment.new(payment_gateway: adapter)
       expect{ payment.authorize(order_number: '12345',
         total_amount: 123.34,
         card_number:  '4242424242424242') }.not_to raise_error
@@ -57,7 +57,7 @@ module Payments
       expect(adapter).to receive(:authorize).with(123.34, '4242424242424242').and_return('123144567813u4132rt78rgfwbd234567890')
       expect(adapter).to receive(:capture).with('123144567813u4132rt78rgfwbd234567890')
       expect(adapter).to receive(:release).with('123144567813u4132rt78rgfwbd234567890')
-      payment = Payment.new(transaction_identifier: nil, payment_gateway: adapter)
+      payment = Payment.new(payment_gateway: adapter)
       expect{ payment.authorize(order_number: '12345',
         total_amount: 123.34,
         card_number:  '4242424242424242') }.not_to raise_error
@@ -80,7 +80,7 @@ module Payments
       adapter = double(:adapter)
       expect(adapter).to receive(:authorize).with(123.34, '4242424242424242').and_return('123144567813u4132rt78rgfwbd234567890')
       expect(adapter).to receive(:release).with('123144567813u4132rt78rgfwbd234567890')
-      payment = Payment.new(transaction_identifier: nil, payment_gateway: adapter)
+      payment = Payment.new(payment_gateway: adapter)
       expect{ payment.authorize(order_number: '12345',
         total_amount: 123.34,
         card_number:  '4242424242424242') }.not_to raise_error

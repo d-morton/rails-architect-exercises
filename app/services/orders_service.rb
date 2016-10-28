@@ -22,11 +22,11 @@ class OrdersService
   private
 
   def with_order(number)
-    repository = AggregateRoot::Repository.new(@store)
+    stream = "Order$#{number}"
     order = Orders::Order.new(number: number, fee_calculator: @fee_calculator)
-    repository.load(order)
+    order.load(stream, event_store: @store)
     yield order
-    repository.store(order)
+    order.store(stream, event_store: @store)
   end
 
   def submit(cmd)

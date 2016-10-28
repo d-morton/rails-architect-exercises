@@ -2,17 +2,16 @@ require 'aggregate_root'
 
 module Payments
   class Payment
-    include AggregateRoot::Base
+    include AggregateRoot
     NotAuthorized                     = Class.new(StandardError)
     InvalidOperation                  = Class.new(StandardError)
 
-    def initialize(transaction_identifier:, payment_gateway:)
-      self.id           = transaction_identifier
-      @payment_gateway  = payment_gateway
+    def initialize(payment_gateway:)
+      @payment_gateway = payment_gateway
     end
 
     def authorize(order_number:, total_amount:, card_number:)
-      raise InvalidOperation if self.id
+      raise InvalidOperation if authorized?
       raise InvalidOperation if captured? || released?
       begin
         transaction_identifier = @payment_gateway.authorize(total_amount, card_number)
@@ -26,24 +25,29 @@ module Payments
     end
 
     def capture
-      raise NotAuthorized unless self.id
+      raise NotAuthorized unless authorized?
       raise InvalidOperation if captured? || released?
-      @payment_gateway.capture(self.id)
+      payment_gateway.capture(transaction_identifier)
       apply(PaymentCaptured.new(data: {
-        order_number: @order_number,
-        transaction_identifier: self.id}))
+        order_number: order_number,
+        transaction_identifier: transaction_identifier}))
     end
 
     def release
-      raise NotAuthorized unless self.id
+      raise NotAuthorized unless authorized?
       raise InvalidOperation if released?
-      @payment_gateway.release(self.id)
+      payment_gateway.release(transaction_identifier)
       apply(PaymentReleased.new(data: {
-        order_number: @order_number,
-        transaction_identifier: self.id}))
+        order_number: order_number,
+        transaction_identifier: transaction_identifier}))
     end
 
+    attr_reader :transaction_identifier
     private
+    def authorized?
+      authorized
+    end
+
     def captured?
       @captured
     end
@@ -66,12 +70,11 @@ module Payments
     def apply_authorized(ev)
       @authorized = true
       @order_number = ev.data[:order_number]
-      self.id = ev.data[:transaction_identifier]
+      @transaction_identifier = ev.data[:transaction_identifier]
     end
 
     def apply_authorize_failed(ev)
       @order_number = ev.data[:order_number]
-      self.id = 'failed-transactions'
     end
 
     def apply_captured(ev)

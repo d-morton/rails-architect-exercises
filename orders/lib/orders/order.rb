@@ -2,12 +2,12 @@ require 'aggregate_root'
 
 module Orders
   class Order
-    include AggregateRoot::Base
+    include AggregateRoot
     NotAllowed = Class.new(StandardError)
     Invalid    = Class.new(StandardError)
 
     def initialize(number:, fee_calculator: FeeCalculator.new)
-      self.id         = number
+      @number         = number
       @state          = :draft
       @items          = []
       @fee_calculator = fee_calculator
@@ -25,7 +25,7 @@ module Orders
       gross_value = net_value + vat_amount
 
       apply(OrderItemAdded.new(data: {
-        order_number: id,
+        order_number: number,
         sku: sku,
         quantity: quantity,
         net_price: net_price,
@@ -44,7 +44,7 @@ module Orders
       vat_total = @items.sum{|i| i[:vat_amount]}
 
       apply(OrderSubmitted.new(data: {
-        order_number: id,
+        order_number: number,
         customer_id:  customer_id,
         items_count:  @items.sum{|i| i[:quantity]},
         net_total:    net_total,

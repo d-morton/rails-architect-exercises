@@ -21,23 +21,24 @@ class PaymentsService
   private
 
   def with_payment(identifier)
-    repository = AggregateRoot::Repository.new(@store)
-    payment = Payments::Payment.new(transaction_identifier: identifier,
-                                    payment_gateway: @payment_gateway)
-    repository.load(payment)
+    stream = "Payment$#{identifier}"
+    payment = Payments::Payment.new(payment_gateway: @payment_gateway)
+    payment.load(stream, event_store: @store)
     yield payment
-    repository.store(payment)
+    payment.store(stream, event_store: @store)
   end
 
   def authorize(cmd)
-    repository = AggregateRoot::Repository.new(@store)
-    payment = Payments::Payment.new(transaction_identifier: nil,
-                                    payment_gateway: @payment_gateway)
+    payment = Payments::Payment.new(payment_gateway: @payment_gateway)
     payment.authorize(
       order_number: cmd.order_number,
       total_amount: cmd.total_amount,
       card_number:  cmd.card_number)
-    repository.store(payment)
+    stream = "Payment$#{payment.transaction_identifier}"
+    payment.store(stream, event_store: @store)
+  rescue Payments::PaymentAuthorizationFailed
+    payment.store('failed-transactions', event_store: @store)
+    raise
   end
 
   def capture(cmd)
