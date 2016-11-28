@@ -120,13 +120,13 @@ GEM
       nokogiri (~> 1.6.0)
     rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
-    rails_event_store (0.14.0)
+    rails_event_store (0.14.3)
       activemodel (>= 3.0)
       activesupport (>= 3.0)
       aggregate_root (~> 0.4.0)
-      rails_event_store_active_record (~> 0.6.9)
+      rails_event_store_active_record (~> 0.6.10)
       ruby_event_store (~> 0.13.0)
-    rails_event_store_active_record (0.6.9)
+    rails_event_store_active_record (0.6.10)
       activemodel (>= 3.0)
       activesupport (>= 3.0)
       ruby_event_store (~> 0.13.0)
@@ -215,7 +215,7 @@ DEPENDENCIES
   pry
   puma (~> 3.0)
   rails (~> 5.0.0)
-  rails_event_store (= 0.14.0)
+  rails_event_store (= 0.14.3)
   rspec-activemodel-mocks
   rspec-collection_matchers
   rspec-rails (~> 3.5)
