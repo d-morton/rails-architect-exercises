@@ -34,11 +34,10 @@ class PaymentsService
       order_number: cmd.order_number,
       total_amount: cmd.total_amount,
       card_number:  cmd.card_number)
-    stream = "Payment$#{payment.transaction_identifier}"
+    stream = payment.transaction_identifier.present? ?
+      "Payment$#{payment.transaction_identifier}" :
+      "failed-transactions"
     payment.store(stream, event_store: @store)
-  rescue Payments::PaymentAuthorizationFailed
-    payment.store('failed-transactions', event_store: @store)
-    raise
   end
 
   def capture(cmd)
@@ -49,7 +48,7 @@ class PaymentsService
 
   def release(cmd)
     with_payment(cmd.transaction_identifier) do |payment|
-      payment.capture
+      payment.release
     end
   end
 end
