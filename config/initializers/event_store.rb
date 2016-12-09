@@ -9,6 +9,12 @@ Rails.application.config.event_store.tap do |es|
   es.subscribe(instance_of(OrderList::OrderExpiredHandler), [Orders::OrderExpired])
   es.subscribe(instance_of(OrderList::OrderPaidHandler), [Payments::PaymentAuthorized])
   es.subscribe(instance_of(OrderList::OrderPaymentFailedHandler), [Payments::PaymentAuthorizationFailed])
+  es.subscribe(instance_of(Orders::PaymentsProjection), [
+    Payments::PaymentAuthorized,
+    Payments::PaymentCaptured,
+    Payments::PaymentReleased,
+    Payments::PaymentAuthorizationFailed,
+  ])
 
   es.subscribe(instance_of(Orders::ScheduleExpireOnSubmit, ExpireOrderJob), [Orders::OrderSubmitted])
 
