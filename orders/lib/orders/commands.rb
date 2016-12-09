@@ -2,11 +2,10 @@ module Orders
   class SubmitOrderCommand
     include Command
 
-    attr_accessor :order_number
     attr_reader :customer_id
     attr_accessor :items
 
-    validates_presence_of :order_number, :customer_id, :items
+    validates_presence_of :customer_id, :items
 
     def customer_id=(int)
       @customer_id = Integer(int)

@@ -24,20 +24,21 @@ class TestPaymentGateway
 end
 
 RSpec.describe PaymentsService do
+  let(:number_generator) { ->{ '12345' } }
+  let(:pricing) { ->(_){ {net_price: 100.0, vat_rate: 0.23} } }
+
   it 'successful flow' do
-    orders_service   = OrdersService.new(store: Rails.application.config.event_store)
+    orders_service = OrdersService.new(store: Rails.application.config.event_store,
+      pricing: pricing, number_generator: number_generator)
     payments_service = PaymentsService.new(store: Rails.application.config.event_store,
                                            payment_gateway: TestPaymentGateway.new)
     customer = Orders::Customer.create!(name: 'John')
     orders_service.call(
       Orders::SubmitOrderCommand.new(
-        order_number: '12345',
         customer_id:  customer.id,
         items:        [
           { sku:        123,
-            quantity:   2,
-            net_price:  100.0,
-            vat_rate:   0.23 }])
+            quantity:   2 }])
     )
 
     expect do
@@ -52,19 +53,17 @@ RSpec.describe PaymentsService do
   end
 
   it 'unsuccessful payment flow' do
-    orders_service   = OrdersService.new(store: Rails.application.config.event_store)
+    orders_service = OrdersService.new(store: Rails.application.config.event_store,
+      pricing: pricing, number_generator: number_generator)
     payments_service = PaymentsService.new(store: Rails.application.config.event_store,
                                            payment_gateway: TestPaymentGateway.new)
     customer = Orders::Customer.create!(name: 'John')
     orders_service.call(
       Orders::SubmitOrderCommand.new(
-        order_number: '12345',
         customer_id:  customer.id,
         items:        [
           { sku:        123,
-            quantity:   2,
-            net_price:  100.0,
-            vat_rate:   0.23 }])
+            quantity:   2 }])
     )
 
     expect do

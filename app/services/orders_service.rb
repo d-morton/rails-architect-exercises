@@ -1,9 +1,13 @@
 require 'arkency/command_bus'
 
 class OrdersService
-  def initialize(store:, fee_calculator: Orders::FeeCalculator.new)
-    @store          = store
-    @fee_calculator = fee_calculator
+  def initialize(store:, pricing:,
+                 number_generator: Orders::NumberGenerator.new,
+                 fee_calculator: Orders::FeeCalculator.new)
+    @store            = store
+    @pricing          = pricing
+    @number_generator = number_generator
+    @fee_calculator   = fee_calculator
 
     @command_bus    = Arkency::CommandBus.new
     { Orders::SubmitOrderCommand  => method(:submit),
@@ -30,9 +34,10 @@ class OrdersService
   end
 
   def submit(cmd)
-    with_order(cmd.order_number) do |order|
+    order_number = @number_generator.call
+    with_order(order_number) do |order|
       cmd.items.each do |item|
-        order.add_item(item)
+        order.add_item(item.merge(@pricing.call(item.fetch(:sku))))
       end
       order.submit(customer_id: cmd.customer_id)
     end

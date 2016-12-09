@@ -17,7 +17,6 @@ class OrdersController < ApplicationController
 
   def create
     cmd = Orders::SubmitOrderCommand.new(
-      order_number: order_number,
       items: order_items,
       customer_id: params[:customer_id])
     service.call(cmd)
@@ -52,19 +51,13 @@ class OrdersController < ApplicationController
 
   private
   def service
-    OrdersService.new(store: Rails.application.config.event_store)
-  end
-
-  def order_number
-    "#{Time.now.year}-#{Time.now.month}-#{SecureRandom.hex(5)}"
+    OrdersService.new(store: Rails.application.config.event_store,
+                      pricing: ->(sku) { p = Orders::Product.find(sku); {net_price: p.net_price, vat_rate: p.vat_rate} })
   end
 
   def order_items
-    items = params[:quantity].map(&:to_i).map.with_index { |quantity,index|
-      [quantity, Orders::Product.find(params[:products][index])] if quantity > 0
-    }.compact.to_h
-    items.map {|q, p|
-      {sku: p.id, quantity: q, net_price: p.net_price, vat_rate: p.vat_rate}
-    }
+    params[:quantity].map(&:to_i).map.with_index { |quantity,index|
+      {sku: params[:products][index], quantity: quantity} if quantity > 0
+    }.compact
   end
 end
