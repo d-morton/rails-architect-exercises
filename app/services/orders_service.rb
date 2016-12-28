@@ -25,39 +25,38 @@ class OrdersService
 
   private
 
-  def with_order(number)
-    stream = "Order$#{number}"
-    order = Orders::Order.new(number: number, fee_calculator: @fee_calculator)
-    order.load(stream, event_store: @store)
-    yield order
+  def submit(cmd)
+    order_number = @number_generator.call
+    stream = "Order$#{order_number}"
+    order = Orders::Order.new(number: order_number, fee_calculator: @fee_calculator)
+    cmd.items.each do |item|
+      order.add_item(item.merge(@pricing.call(item.fetch(:sku))))
+    end
+    order.submit(customer_id: cmd.customer_id)
     order.store(stream, event_store: @store)
   end
 
-  def submit(cmd)
-    order_number = @number_generator.call
-    with_order(order_number) do |order|
-      cmd.items.each do |item|
-        order.add_item(item.merge(@pricing.call(item.fetch(:sku))))
-      end
-      order.submit(customer_id: cmd.customer_id)
-    end
-  end
-
   def expire(cmd)
-    with_order(cmd.order_number) do |order|
-      order.expire
-    end
+    stream = "Order$#{cmd.order_number}"
+    order = Orders::Order.new(number: cmd.order_number, fee_calculator: @fee_calculator)
+    order.load(stream, event_store: @store)
+    order.expire
+    order.store(stream, event_store: @store)
   end
 
   def cancel(cmd)
-    with_order(cmd.order_number) do |order|
-      order.cancel
-    end
+    stream = "Order$#{cmd.order_number}"
+    order = Orders::Order.new(number: cmd.order_number, fee_calculator: @fee_calculator)
+    order.load(stream, event_store: @store)
+    order.cancel
+    order.store(stream, event_store: @store)
   end
 
   def ship(cmd)
-    with_order(cmd.order_number) do |order|
-      order.ship
-    end
+    stream = "Order$#{cmd.order_number}"
+    order = Orders::Order.new(number: cmd.order_number, fee_calculator: @fee_calculator)
+    order.load(stream, event_store: @store)
+    order.ship
+    order.store(stream, event_store: @store)
   end
 end

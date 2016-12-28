@@ -20,14 +20,6 @@ class PaymentsService
 
   private
 
-  def with_payment(identifier)
-    stream = "Payment$#{identifier}"
-    payment = Payments::Payment.new(payment_gateway: @payment_gateway)
-    payment.load(stream, event_store: @store)
-    yield payment
-    payment.store(stream, event_store: @store)
-  end
-
   def authorize(cmd)
     payment = Payments::Payment.new(payment_gateway: @payment_gateway)
     payment.authorize(
@@ -41,14 +33,18 @@ class PaymentsService
   end
 
   def capture(cmd)
-    with_payment(cmd.transaction_identifier) do |payment|
-      payment.capture
-    end
+    stream = "Payment$#{cmd.transaction_identifier}"
+    payment = Payments::Payment.new(payment_gateway: @payment_gateway)
+    payment.load(stream, event_store: @store)
+    payment.capture
+    payment.store(stream, event_store: @store)
   end
 
   def release(cmd)
-    with_payment(cmd.transaction_identifier) do |payment|
-      payment.release
-    end
+    stream = "Payment$#{cmd.transaction_identifier}"
+    payment = Payments::Payment.new(payment_gateway: @payment_gateway)
+    payment.load(stream, event_store: @store)
+    payment.release
+    payment.store(stream, event_store: @store)
   end
 end
