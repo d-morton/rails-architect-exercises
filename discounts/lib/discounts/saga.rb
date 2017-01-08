@@ -14,6 +14,12 @@ module Discounts
             s.save!
           end
         end
+      rescue ActiveRecord::StatementInvalid => exc
+        if exc.message =~ /Deadlock found/ # Mysql specific
+          retry
+        else
+          raise
+        end
       rescue ActiveRecord::RecordNotUnique
         retry
       end
