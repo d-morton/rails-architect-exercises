@@ -4,7 +4,7 @@ module Orders
       order = Order.new(number: '12345')
       expect{ order.cancel }.not_to raise_error
       expect(order).to publish [
-        OrderCancelled.new(data: { order_number: '12345' }),
+        OrderCancelled.strict(data: { order_number: '12345' }),
       ]
     end
 
@@ -12,7 +12,7 @@ module Orders
       order = Order.new(number: '12345')
       expect{ order.expire }.not_to raise_error
       expect(order).to publish [
-        OrderExpired.new(data: { order_number: '12345' }),
+        OrderExpired.strict(data: { order_number: '12345' }),
       ]
     end
 
@@ -77,7 +77,7 @@ module Orders
                            vat_total:     46.0,
                            gross_total:   246.0,
                            fee:           0.0 }),
-        OrderShipped.new(data: { order_number:    '12345',
+        OrderShipped.strict(data: { order_number:    '12345',
                                  customer_id:   123,
         }),
       ]
@@ -97,7 +97,7 @@ module Orders
       order.submit(customer_id: 123)
       order.ship
       expect(order).not_to publish [
-        OrderExpired.new(data: { order_number: '12345' }),
+        OrderExpired.strict(data: { order_number: '12345' }),
       ]
     end
 
@@ -107,7 +107,7 @@ module Orders
       order.submit(customer_id: 123)
       order.expire
       expect(order).not_to publish [
-        OrderExpired.new(data: { order_number: '12345' }),
+        OrderExpired.strict(data: { order_number: '12345' }),
       ]
     end
 

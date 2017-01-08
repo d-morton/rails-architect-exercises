@@ -55,13 +55,13 @@ module Orders
 
     def cancel
       raise NotAllowed unless [:draft, :submitted].include?(state)
-      apply(OrderCancelled.new(data: {
+      apply(OrderCancelled.strict(data: {
         order_number: number}))
     end
 
     def expire
       return if [:expired, :shipped].include?(state)
-      apply(OrderExpired.new(data: {
+      apply(OrderExpired.strict(data: {
         order_number: number}))
     end
 
