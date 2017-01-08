@@ -68,8 +68,6 @@ RSpec.describe Discounts::Saga do
   private
 
   def order_shipped(data)
-    # Bug https://github.com/arkency/ruby_event_store/issues/32
-    # workaround in config/initializers/ruby_event_store_event_yamlable.rb
     YAML.dump(Orders::OrderShipped.strict(data: data))
   end
 
