@@ -1,8 +1,50 @@
 require 'ruby_event_store'
 
 module Payments
-  PaymentAuthorized           = Class.new(RubyEventStore::Event)
-  PaymentAuthorizationFailed  = Class.new(RubyEventStore::Event)
-  PaymentCaptured             = Class.new(RubyEventStore::Event)
-  PaymentReleased             = Class.new(RubyEventStore::Event)
+  class PaymentAuthorized < RubyEventStore::Event
+    SCHEMA = {
+      transaction_identifier: String,
+      order_number:  String,
+    }.freeze
+
+    def self.strict(data:)
+      ClassyHash.validate(data, SCHEMA, true)
+      new(data: data)
+    end
+  end
+
+  class PaymentAuthorizationFailed < RubyEventStore::Event
+    SCHEMA = {
+      order_number:  String,
+    }.freeze
+
+    def self.strict(data:)
+      ClassyHash.validate(data, SCHEMA, true)
+      new(data: data)
+    end
+  end
+
+  class PaymentCaptured < RubyEventStore::Event
+    SCHEMA = {
+      transaction_identifier: String,
+      order_number:  String,
+    }.freeze
+
+    def self.strict(data:)
+      ClassyHash.validate(data, SCHEMA, true)
+      new(data: data)
+    end
+  end
+
+  class PaymentReleased < RubyEventStore::Event
+    SCHEMA = {
+      transaction_identifier: String,
+      order_number:  String,
+    }.freeze
+
+    def self.strict(data:)
+      ClassyHash.validate(data, SCHEMA, true)
+      new(data: data)
+    end
+  end
 end

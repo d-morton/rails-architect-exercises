@@ -15,7 +15,7 @@ module Payments
       raise InvalidOperation if captured? || released?
       begin
         transaction_identifier = payment_gateway.authorize(total_amount, card_number)
-        apply(PaymentAuthorized.new(data: {
+        apply(PaymentAuthorized.strict(data: {
           order_number: order_number,
           transaction_identifier: transaction_identifier}))
       rescue
@@ -28,7 +28,7 @@ module Payments
       raise NotAuthorized unless authorized?
       raise InvalidOperation if captured? || released?
       payment_gateway.capture(transaction_identifier)
-      apply(PaymentCaptured.new(data: {
+      apply(PaymentCaptured.strict(data: {
         order_number: order_number,
         transaction_identifier: transaction_identifier}))
     end
@@ -37,7 +37,7 @@ module Payments
       raise NotAuthorized unless authorized?
       raise InvalidOperation if released?
       payment_gateway.release(transaction_identifier)
-      apply(PaymentReleased.new(data: {
+      apply(PaymentReleased.strict(data: {
         order_number: order_number,
         transaction_identifier: transaction_identifier}))
     end

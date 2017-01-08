@@ -8,7 +8,7 @@ module Payments
         total_amount: 123.34,
         card_number:  '4242424242424242') }.not_to raise_error
       expect(payment).to publish [
-        PaymentAuthorized.new(data: {
+        PaymentAuthorized.strict(data: {
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
           order_number:           '12345'}),
       ]
@@ -22,7 +22,7 @@ module Payments
         total_amount: 123.34,
         card_number:  'invalid') }.not_to raise_error
       expect(payment).to publish [
-        PaymentAuthorizationFailed.new(data: {
+        PaymentAuthorizationFailed.strict(data: {
           order_number:           '12345'}),
       ]
     end
@@ -43,10 +43,10 @@ module Payments
         card_number:  '4242424242424242') }.not_to raise_error
       expect{ payment.capture }.not_to raise_error
       expect(payment).to publish [
-        PaymentAuthorized.new(data: {
+        PaymentAuthorized.strict(data: {
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
           order_number:           '12345'}),
-        PaymentCaptured.new(data: {
+        PaymentCaptured.strict(data: {
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
           order_number:           '12345'}),
       ]
@@ -64,13 +64,13 @@ module Payments
       expect{ payment.capture }.not_to raise_error
       expect{ payment.release }.not_to raise_error
       expect(payment).to publish [
-        PaymentAuthorized.new(data: {
+        PaymentAuthorized.strict(data: {
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
           order_number:           '12345'}),
-        PaymentCaptured.new(data: {
+        PaymentCaptured.strict(data: {
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
           order_number:           '12345'}),
-        PaymentReleased.new(data: {
+        PaymentReleased.strict(data: {
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
           order_number:           '12345'}),
       ]
@@ -87,10 +87,10 @@ module Payments
       expect{ payment.release }.not_to raise_error
       expect{ payment.capture }.to raise_error(Payment::InvalidOperation)
       expect(payment).to publish [
-        PaymentAuthorized.new(data: {
+        PaymentAuthorized.strict(data: {
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
           order_number:           '12345'}),
-        PaymentReleased.new(data: {
+        PaymentReleased.strict(data: {
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
           order_number:           '12345'}),
       ]
