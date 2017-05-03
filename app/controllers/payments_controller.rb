@@ -5,9 +5,10 @@ class PaymentsController < ApplicationController
       order_number: order.number,
       total_amount: order.gross_value,
       card_number:  params[:card_number])
-    Rails.configuration.command_bus.call(cmd)
+    command_bus.call(cmd)
     redirect_to orders_url, notice: 'Order paid.'
   rescue
     redirect_to orders_url, notice: "Payment failed"
   end
+
 end

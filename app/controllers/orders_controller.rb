@@ -5,8 +5,8 @@ class OrdersController < ApplicationController
 
   def show
     order = OrderList::Order.find(params[:id])
-    order_history = Rails.application.config.event_store.read_stream_events_backward("Order$#{order.number}")
-    payment_history = Rails.application.config.event_store.read_stream_events_backward("OrderPayment$#{order.number}")
+    order_history = event_store.read_stream_events_backward("Order$#{order.number}")
+    payment_history = event_store.read_stream_events_backward("OrderPayment$#{order.number}")
     @history = (order_history + payment_history).sort_by{|x| x.metadata[:timestamp]}.reverse
   end
 
@@ -51,7 +51,7 @@ class OrdersController < ApplicationController
 
   private
   def service
-    OrdersService.new(store: Rails.application.config.event_store,
+    OrdersService.new(store: event_store,
                       pricing: ->(sku) { p = Orders::Product.find(sku); {net_price: p.net_price, vat_rate: p.vat_rate} })
   end
 
