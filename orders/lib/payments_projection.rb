@@ -9,7 +9,7 @@ module Orders
         data: event.data,
         metadata: event.metadata.merge(correlation_id: event.event_id))
       stream = "OrderPayment$#{event.data[:order_number]}"
-      event_store.append_to_stream(event_projection, stream_name: stream)
+      event_store.append(event_projection, stream_name: stream)
     end
 
     private

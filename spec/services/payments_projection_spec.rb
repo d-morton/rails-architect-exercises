@@ -24,9 +24,9 @@ RSpec.describe PaymentsProjection do
         order_number: order_number,
         transaction_identifier: transaction_identifier}),
     ]
-    es.publish_event(payments_stream.first, stream_name: "failed-transactions")
+    es.publish(payments_stream.first, stream_name: "failed-transactions")
     payments_stream.last(3).each do |ev|
-      es.publish_event(ev, stream_name: "Payment$#{transaction_identifier}")
+      es.publish(ev, stream_name: "Payment$#{transaction_identifier}")
     end
 
     projection_stream = es.read.stream("OrderPayment$#{order_number}").each

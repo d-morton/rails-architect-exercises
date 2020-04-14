@@ -10,7 +10,7 @@ class PaymentsProjection
         metadata: event.metadata
       )
       stream = "OrderPayment$#{event.data[:order_number]}"
-      @event_store.append_to_stream(event_projection, stream_name: stream)
+      @event_store.append(event_projection, stream_name: stream)
     end
   end
 end

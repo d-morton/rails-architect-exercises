@@ -57,6 +57,6 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'bootstrap-sass', '3.3.7'
-gem 'rails_event_store', '0.30.0'
+gem 'rails_event_store', '0.31.1'
 gem 'classy_hash'
 gem 'delayed_job_active_record'
