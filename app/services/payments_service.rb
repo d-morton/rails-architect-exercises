@@ -2,7 +2,7 @@ require 'arkency/command_bus'
 
 class PaymentsService
   def initialize(store:, payment_gateway:)
-    @store            = store
+    @repository       = AggregateRoot::Repository.new(store)
     @payment_gateway  = payment_gateway
 
     @command_bus      = Arkency::CommandBus.new
@@ -29,22 +29,24 @@ class PaymentsService
     stream = payment.transaction_identifier.present? ?
       "Payment$#{payment.transaction_identifier}" :
       "failed-transactions"
-    payment.store(stream, event_store: @store)
+    @repository.store(payment, stream)
   end
 
   def capture(cmd)
-    stream = "Payment$#{cmd.transaction_identifier}"
-    payment = Payments::Payment.new(payment_gateway: @payment_gateway)
-    payment.load(stream, event_store: @store)
-    payment.capture
-    payment.store(stream, event_store: @store)
+    @repository.with_aggregate(
+      Payments::Payment.new(payment_gateway: @payment_gateway),
+      "Payment$#{cmd.transaction_identifier}"
+    ) do |payment|
+      payment.capture
+    end
   end
 
   def release(cmd)
-    stream = "Payment$#{cmd.transaction_identifier}"
-    payment = Payments::Payment.new(payment_gateway: @payment_gateway)
-    payment.load(stream, event_store: @store)
-    payment.release
-    payment.store(stream, event_store: @store)
+    @repository.with_aggregate(
+      Payments::Payment.new(payment_gateway: @payment_gateway),
+      "Payment$#{cmd.transaction_identifier}"
+    ) do |payment|
+      payment.release
+    end
   end
 end

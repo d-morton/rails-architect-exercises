@@ -4,7 +4,7 @@ class OrdersService
   def initialize(store:, pricing:,
                  number_generator: Orders::NumberGenerator.new,
                  fee_calculator: Orders::FeeCalculator.new)
-    @store            = store
+    @repository       = AggregateRoot::Repository.new(store)
     @pricing          = pricing
     @number_generator = number_generator
     @fee_calculator   = fee_calculator
@@ -33,30 +33,33 @@ class OrdersService
       order.add_item(item.merge(@pricing.call(item.fetch(:sku))))
     end
     order.submit(customer_id: cmd.customer_id)
-    order.store(stream, event_store: @store)
+    @repository.store(order, stream)
   end
 
   def expire(cmd)
-    stream = "Order$#{cmd.order_number}"
-    order = Orders::Order.new(number: cmd.order_number, fee_calculator: @fee_calculator)
-    order.load(stream, event_store: @store)
-    order.expire
-    order.store(stream, event_store: @store)
+    @repository.with_aggregate(
+      Orders::Order.new(number: cmd.order_number, fee_calculator: @fee_calculator),
+      "Order$#{cmd.order_number}"
+    ) do |order|
+      order.expire
+    end
   end
 
   def cancel(cmd)
-    stream = "Order$#{cmd.order_number}"
-    order = Orders::Order.new(number: cmd.order_number, fee_calculator: @fee_calculator)
-    order.load(stream, event_store: @store)
-    order.cancel
-    order.store(stream, event_store: @store)
+    @repository.with_aggregate(
+      Orders::Order.new(number: cmd.order_number, fee_calculator: @fee_calculator),
+      "Order$#{cmd.order_number}"
+    ) do |order|
+      order.cancel
+    end
   end
 
   def ship(cmd)
-    stream = "Order$#{cmd.order_number}"
-    order = Orders::Order.new(number: cmd.order_number, fee_calculator: @fee_calculator)
-    order.load(stream, event_store: @store)
-    order.ship
-    order.store(stream, event_store: @store)
+    @repository.with_aggregate(
+      Orders::Order.new(number: cmd.order_number, fee_calculator: @fee_calculator),
+      "Order$#{cmd.order_number}"
+    ) do |order|
+      order.ship
+    end
   end
 end
