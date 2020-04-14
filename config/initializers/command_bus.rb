@@ -1,3 +1,5 @@
+require 'arkency/command_bus'
+
 command_bus = Arkency::CommandBus.new
 
 payments_service_handler = ->(c) do
