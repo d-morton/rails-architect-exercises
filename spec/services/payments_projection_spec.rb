@@ -1,7 +1,7 @@
 RSpec.describe PaymentsProjection do
   specify do
     es = RailsEventStore::Client.new
-    es.subscribe(PaymentsProjection.new(es), [
+    es.subscribe(PaymentsProjection.new(es), to: [
       Payments::PaymentAuthorized,
       Payments::PaymentCaptured,
       Payments::PaymentReleased,

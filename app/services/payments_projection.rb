@@ -4,10 +4,13 @@ class PaymentsProjection
   end
 
   def call(event)
-    event_projection = event.class.new(
-      data: event.data,
-      metadata: event.metadata.merge(correlation_id: event.event_id))
-    stream = "OrderPayment$#{event.data[:order_number]}"
-    @event_store.append_to_stream(event_projection, stream_name: stream)
+    @event_store.with_metadata(correlation_id: event.event_id) do
+      event_projection = event.class.new(
+        data: event.data,
+        metadata: event.metadata
+      )
+      stream = "OrderPayment$#{event.data[:order_number]}"
+      @event_store.append_to_stream(event_projection, stream_name: stream)
+    end
   end
 end
