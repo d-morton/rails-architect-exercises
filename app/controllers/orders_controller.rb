@@ -5,8 +5,8 @@ class OrdersController < ApplicationController
 
   def show
     order = OrderList::Order.find(params[:id])
-    order_history = event_store.read_stream_events_backward("Order$#{order.number}")
-    payment_history = event_store.read_stream_events_backward("OrderPayment$#{order.number}")
+    order_history = event_store.read.stream("Order$#{order.number}").backward.to_a
+    payment_history = event_store.read.stream("OrderPayment$#{order.number}").backward.to_a
     @history = (order_history + payment_history).sort_by{|x| x.metadata[:timestamp]}.reverse
   end
 
