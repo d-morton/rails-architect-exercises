@@ -1,7 +1,6 @@
 ENV['RAILS_ENV'] = 'test'
 
 require File.expand_path("../../config/environment", __FILE__)
-require_relative '../rails_event_store-matchers/lib/rails_event_store-matchers'
 
 require 'rspec/rails'
 require 'rspec/collection_matchers'
@@ -9,6 +8,8 @@ require 'rspec/active_model/mocks'
 require 'database_cleaner'
 
 RSpec.configure do |config|
+  config.include ::RailsEventStore::RSpec::Matchers
+
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
     expectations.syntax = :expect
@@ -20,7 +21,7 @@ RSpec.configure do |config|
   config.disable_monkey_patching!
   config.order = :random
   config.formatter = :documentation
-  
+
   Kernel.srand(config.seed)
 
   config.before(:suite) do

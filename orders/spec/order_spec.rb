@@ -3,17 +3,17 @@ module Orders
     it 'newly created order could be cancelled' do
       order = Order.new(number: '12345')
       expect{ order.cancel }.not_to raise_error
-      expect(order).to publish [
-        OrderCancelled.strict(data: { order_number: '12345' }),
-      ]
+      expect(order).to have_applied(
+        an_event(OrderCancelled).with_data(order_number: '12345').strict,
+      )
     end
 
     it 'newly created order could be expired' do
       order = Order.new(number: '12345')
       expect{ order.expire }.not_to raise_error
-      expect(order).to publish [
-        OrderExpired.strict(data: { order_number: '12345' }),
-      ]
+      expect(order).to have_applied(
+        an_event(OrderExpired).with_data(order_number: '12345').strict,
+      )
     end
 
     it 'newly created order could not be shipped' do
@@ -45,16 +45,17 @@ module Orders
     it 'item could be added to draft order' do
       order = Order.new(number: '12345')
       expect{ order.add_item(sku: 123, quantity: 1, net_price: 100.0, vat_rate: 23)}.not_to raise_error
-      expect(order).to publish [
-        OrderItemAdded.new(data: { order_number:  '12345',
-                           sku:           123,
-                           quantity:      1,
-                           net_price:     100.0,
-                           net_value:     100.0,
-                           vat_amount:    23.0,
-                           gross_value:   123.0,
-        }),
-      ]
+      expect(order).to have_applied(
+        an_event(OrderItemAdded).with_data(
+          order_number:  '12345',
+          sku:           123,
+          quantity:      1,
+          net_price:     100.0,
+          net_value:     100.0,
+          vat_amount:    23.0,
+          gross_value:   123.0,
+        ).strict,
+      )
     end
 
     it 'order with items could be submitted & shipped' do
@@ -62,25 +63,30 @@ module Orders
       order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 23)
       expect{ order.submit(customer_id: 123)}.not_to raise_error
       expect{ order.ship }.not_to raise_error
-      expect(order).to publish [
-        OrderItemAdded.new(data: { order_number:  '12345',
-                           sku:           123,
-                           quantity:      2,
-                           net_price:     100.0,
-                           net_value:     200.0,
-                           vat_amount:    46.0,
-                           gross_value:   246.0, }),
-        OrderSubmitted.new(data: { order_number:  '12345',
-                           customer_id:   123,
-                           items_count:   2,
-                           net_total:     200.0,
-                           vat_total:     46.0,
-                           gross_total:   246.0,
-                           fee:           0.0 }),
-        OrderShipped.strict(data: { order_number:    '12345',
-                                 customer_id:   123,
-        }),
-      ]
+      expect(order).to have_applied(
+        an_event(OrderItemAdded).with_data(
+          order_number:  '12345',
+          sku:           123,
+          quantity:      2,
+          net_price:     100.0,
+          net_value:     200.0,
+          vat_amount:    46.0,
+          gross_value:   246.0,
+        ).strict,
+       an_event(OrderSubmitted).with_data(
+         order_number:  '12345',
+         customer_id:   123,
+         items_count:   2,
+         net_total:     200.0,
+         vat_total:     46.0,
+         gross_total:   246.0,
+         fee:           0.0,
+        ).strict,
+       an_event(OrderShipped).with_data(
+         order_number:  '12345',
+         customer_id:   123,
+        ).strict
+      )
     end
 
     it 'shipped order could not be cancelled' do
@@ -96,9 +102,9 @@ module Orders
       order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 23)
       order.submit(customer_id: 123)
       order.ship
-      expect(order).not_to publish [
-        OrderExpired.strict(data: { order_number: '12345' }),
-      ]
+      expect(order).not_to have_applied(
+        an_event(OrderExpired).with_data(order_number: '12345').strict
+      )
     end
 
     it 'expired order won\'t expire again' do
@@ -106,9 +112,10 @@ module Orders
       order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 23)
       order.submit(customer_id: 123)
       order.expire
-      expect(order).not_to publish [
-        OrderExpired.strict(data: { order_number: '12345' }),
-      ]
+      order.expire
+      expect(order).to have_applied(
+        an_event(OrderExpired),
+      ).once
     end
 
     it 'rejects negative vat rates' do

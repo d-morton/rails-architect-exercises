@@ -7,11 +7,12 @@ module Payments
       expect{ payment.authorize(order_number: '12345',
         total_amount: 123.34,
         card_number:  '4242424242424242') }.not_to raise_error
-      expect(payment).to publish [
-        PaymentAuthorized.strict(data: {
+      expect(payment).to have_applied(
+        an_event(PaymentAuthorized).with_data(
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
-          order_number:           '12345'}),
-      ]
+          order_number:           '12345'
+        ).strict
+      )
     end
 
     it 'reject authorization of payment with invalid CC number' do
@@ -21,10 +22,11 @@ module Payments
       expect{ payment.authorize(order_number: '12345',
         total_amount: 123.34,
         card_number:  'invalid') }.not_to raise_error
-      expect(payment).to publish [
-        PaymentAuthorizationFailed.strict(data: {
-          order_number:           '12345'}),
-      ]
+      expect(payment).to have_applied(
+        an_event(PaymentAuthorizationFailed).with_data(
+          order_number: '12345'
+        ).strict
+      )
     end
 
     it 'fails to capture or release not authorized payment' do
@@ -42,14 +44,16 @@ module Payments
         total_amount: 123.34,
         card_number:  '4242424242424242') }.not_to raise_error
       expect{ payment.capture }.not_to raise_error
-      expect(payment).to publish [
-        PaymentAuthorized.strict(data: {
+      expect(payment).to have_applied(
+        an_event(PaymentAuthorized).with_data(
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
-          order_number:           '12345'}),
-        PaymentCaptured.strict(data: {
+          order_number:           '12345'
+        ).strict,
+        an_event(PaymentCaptured).with_data(
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
-          order_number:           '12345'}),
-      ]
+          order_number:           '12345'
+        ).strict,
+      )
     end
 
     it 'captured payment could still be released' do
@@ -63,17 +67,20 @@ module Payments
         card_number:  '4242424242424242') }.not_to raise_error
       expect{ payment.capture }.not_to raise_error
       expect{ payment.release }.not_to raise_error
-      expect(payment).to publish [
-        PaymentAuthorized.strict(data: {
+      expect(payment).to have_applied(
+        an_event(PaymentAuthorized).with_data(
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
-          order_number:           '12345'}),
-        PaymentCaptured.strict(data: {
+          order_number:           '12345'
+        ).strict,
+        an_event(PaymentCaptured).with_data(
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
-          order_number:           '12345'}),
-        PaymentReleased.strict(data: {
+          order_number:           '12345'
+        ).strict,
+        an_event(PaymentReleased).with_data(
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
-          order_number:           '12345'}),
-      ]
+          order_number:           '12345'
+        ).strict
+      )
     end
 
     it 'released payment could not be captured' do
@@ -86,14 +93,16 @@ module Payments
         card_number:  '4242424242424242') }.not_to raise_error
       expect{ payment.release }.not_to raise_error
       expect{ payment.capture }.to raise_error(Payment::InvalidOperation)
-      expect(payment).to publish [
-        PaymentAuthorized.strict(data: {
+      expect(payment).to have_applied(
+        an_event(PaymentAuthorized).with_data(
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
-          order_number:           '12345'}),
-        PaymentReleased.strict(data: {
+          order_number:           '12345'
+        ).strict,
+        an_event(PaymentReleased).with_data(
           transaction_identifier: '123144567813u4132rt78rgfwbd234567890',
-          order_number:           '12345'}),
-      ]
+          order_number:           '12345'
+        ).strict
+      )
     end
   end
 end
