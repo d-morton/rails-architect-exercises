@@ -29,7 +29,7 @@ RSpec.describe PaymentsProjection do
       es.publish_event(ev, stream_name: "Payment$#{transaction_identifier}")
     end
 
-    projection_stream = es.read_stream_events_forward("OrderPayment$#{order_number}")
+    projection_stream = es.read.stream("OrderPayment$#{order_number}").each
     expect(projection_stream.map(&:data)).to eq(payments_stream.map(&:data))
     expect(projection_stream.map{ |e| e.metadata[:correlation_id] })
       .to eq(payments_stream.map(&:event_id))
