@@ -30,7 +30,7 @@ class OrdersService
     stream = "Order$#{order_number}"
     order = Orders::Order.new(number: order_number, fee_calculator: @fee_calculator)
     cmd.items.each do |item|
-      order.add_item(item.merge(@pricing.call(item.fetch(:sku))))
+      order.add_item(**item.merge(@pricing.call(item.fetch(:sku))))
     end
     order.submit(customer_id: cmd.customer_id)
     @repository.store(order, stream)
