@@ -19,6 +19,6 @@ Rails.application.config.event_store.tap do |es|
   es.subscribe(instance_of(Orders::ScheduleExpireOnSubmit, ExpireOrderJob), to: [Orders::OrderSubmitted])
 
   es.subscribe(to: [Orders::OrderShipped]) do |event|
-    Discounts::Saga.perform_later(YAML.dump(event))
+    Discounts::Process.perform_later(YAML.dump(event))
   end
 end

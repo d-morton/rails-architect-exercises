@@ -1,5 +1,5 @@
 module Discounts
-  class Saga < ApplicationJob
+  class Process < ApplicationJob
     queue_as :default
 
     class State < ActiveRecord::Base
@@ -38,7 +38,7 @@ module Discounts
           when Orders::OrderShipped
             state.data[:orders] += [event.data[:order_number]]
             state.data[:orders] = state.data[:orders].uniq
-            Discounts::Saga.set(wait: 1.month).perform_later(YAML.dump( DiscardForDiscounts.new(event.data[:order_number], event.data[:customer_id]) ))
+            Discounts::Process.set(wait: 1.month).perform_later(YAML.dump( DiscardForDiscounts.new(event.data[:order_number], event.data[:customer_id]) ))
           when DiscardForDiscounts
             state.data[:orders] -= [event.order_number]
           else
