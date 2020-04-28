@@ -111,11 +111,8 @@ module Orders
       order = Order.new(number: '12345')
       order.add_item(sku: 123, quantity: 2, net_price: 100.0, vat_rate: 23)
       order.submit(customer_id: 123)
-      order.expire
-      order.expire
-      expect(order).to have_applied(
-        an_event(OrderExpired),
-      ).once
+      expect { order.expire }.to apply(an_event(OrderExpired)).in(order).strict
+      expect { order.expire }.not_to apply(an_event(OrderExpired)).in(order)
     end
 
     it 'rejects negative vat rates' do
