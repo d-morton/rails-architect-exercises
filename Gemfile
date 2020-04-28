@@ -37,7 +37,7 @@ end
 
 group :test do
   gem 'rspec-rails',               '~> 3.5'
-  gem 'rails_event_store-rspec'
+  gem 'rails_event_store-rspec',   '~> 1.0'
   gem 'rspec-collection_matchers', require: false
   gem 'rspec-activemodel-mocks',   require: false
   gem 'database_cleaner',          require: false
@@ -57,6 +57,6 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'bootstrap-sass', '3.3.7'
-gem 'rails_event_store', '0.44.0'
+gem 'rails_event_store', '~> 1.0'
 gem 'classy_hash'
 gem 'delayed_job_active_record'
